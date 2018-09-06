@@ -23,36 +23,36 @@ def mock_vera() -> VeraFactory:
 
 
 @responses.activate
-def test_valid_quota(mock_vera):
+def test_valid_quota(mock_vera: VeraFactory):
     mock_vera().check_quota()
 
 
 @responses.activate
-def test_valid_quota_at_limit(mock_vera):
+def test_valid_quota_at_limit(mock_vera: VeraFactory):
     mock_vera(QUOTA_LIMIT).check_quota()
 
 
 @responses.activate
-def test_invalid_quota_below_limit(mock_vera):
+def test_invalid_quota_below_limit(mock_vera: VeraFactory):
     mock = mock_vera(QUOTA_LIMIT - 1)
     assert_that(mock.check_quota).raises(RandomOrgQuotaExceeded).when_called_with()
 
 
 @responses.activate
-def test_invalid_quota_response(mock_vera):
+def test_invalid_quota_response(mock_vera: VeraFactory):
     _mock_response(QUOTA_URL, status=500)
     assert_that(mock_vera).raises(HTTPError).when_called_with()
 
 
 @mark.xfail
 @responses.activate
-def test_random(mock_vera):
+def test_random(mock_vera: VeraFactory):
     mock_vera().random()
 
 
 @mark.xfail
 @responses.activate
-def test_randint(mock_vera):
+def test_randint(mock_vera: VeraFactory):
     mock_vera().randint(1, 20)
 
 

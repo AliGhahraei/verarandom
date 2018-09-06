@@ -35,13 +35,13 @@ def test_valid_quota_at_limit(mock_vera: VeraFactory):
 @responses.activate
 def test_invalid_quota_below_limit(mock_vera: VeraFactory):
     mock = mock_vera(QUOTA_LIMIT - 1)
-    assert_that(mock.check_quota).raises(RandomOrgQuotaExceeded).when_called_with()
+    assert_that(mock.check_quota).raises(RandomOrgQuotaExceeded)
 
 
 @responses.activate
 def test_invalid_quota_response(mock_vera: VeraFactory):
     _mock_response(QUOTA_URL, status=500)
-    assert_that(mock_vera).raises(HTTPError).when_called_with()
+    assert_that(mock_vera).raises(HTTPError)
 
 
 @mark.xfail

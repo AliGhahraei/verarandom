@@ -32,7 +32,11 @@ class RandomOrgQuotaExceeded(Exception):
 
 
 class VeraRandom(Random):
-    """ Random number generator powered by random.org """
+    """ Random number generator powered by random.org.
+
+    Provides the random.Random interface. You should call randints instead of calling randint
+    multiple times in order to minimize the number of requests you make.
+    """
     def __init__(self):
         quota = self._get_text_response(QUOTA_URL)
 

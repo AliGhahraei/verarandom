@@ -6,7 +6,7 @@ from pytest import fixture, mark
 from requests import HTTPError
 
 from verarandom.random_generator import (
-    VeraRandom, QUOTA_URL, QUOTA_LIMIT, MAX_QUOTA, RandomOrgQuotaExceeded
+    VeraRandom, QUOTA_URL, QUOTA_LIMIT, MAX_QUOTA, RandomOrgQuotaExceeded, INTEGER_URL
 )
 
 
@@ -47,14 +47,28 @@ def test_invalid_quota_response(mock_vera: VeraFactory):
 @mark.xfail
 @responses.activate
 def test_random(mock_vera: VeraFactory):
-    mock_vera().random()
+    assert_that(mock_vera().random()).is_greater_than_or_equal_to(0).is_less_than(1)
 
 
-@mark.xfail
+@mark.parametrize('lower, upper, response', [(1, 20, '17')])
 @responses.activate
-def test_randint(mock_vera: VeraFactory):
-    mock_vera().randint(1, 20)
+def test_randint(mock_vera: VeraFactory, lower: int, upper: int, response: str):
+    _mock_int_response(response)
+    assert_that(mock_vera().randint(lower, upper)).is_greater_than_or_equal_to(lower).\
+        is_less_than_or_equal_to(upper)
+
+
+@mark.parametrize('lower, upper, n, response', [(1, 3, 5, '3\n3\n1\n2\n1')])
+@responses.activate
+def test_randints(mock_vera: VeraFactory, lower: int, upper: int, n: int, response: str):
+    _mock_int_response(response)
+    for random in mock_vera().randints(lower, upper, n):
+        assert_that(random).is_greater_than_or_equal_to(lower).is_less_than_or_equal_to(upper)
 
 
 def _mock_response(url: str, method: str=responses.GET, **kwargs):
     responses.add(method, url, **kwargs)
+
+
+def _mock_int_response(body: str, **kwargs):
+    _mock_response(INTEGER_URL, body=body, **kwargs)

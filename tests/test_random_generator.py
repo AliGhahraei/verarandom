@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, Any
 from unittest import mock
 
 import responses
@@ -15,12 +15,12 @@ VeraFactory = Callable[..., VeraRandom]
 
 
 @fixture
-def patch_vera() -> VeraFactory:
-    def _patch_vera(quota: int = MAX_QUOTA):
+def patch_vera_quota() -> VeraFactory:
+    def _patch_vera_quota(quota: int = MAX_QUOTA):
         _patch_response(QUOTA_URL, body=str(quota))
         return VeraRandom()
 
-    return _patch_vera
+    return _patch_vera_quota
 
 
 def _patch_int_response(body: str, **kwargs):
@@ -32,62 +32,52 @@ def _patch_response(url: str, method: str=responses.GET, **kwargs):
 
 
 @responses.activate
-def test_valid_quota(patch_vera: VeraFactory):
-    patch_vera().check_quota()
+def test_valid_quota(patch_vera_quota: VeraFactory):
+    patch_vera_quota().check_quota()
 
 
 @responses.activate
-def test_valid_quota_at_limit(patch_vera: VeraFactory):
-    patch_vera(QUOTA_LIMIT).check_quota()
+def test_valid_quota_at_limit(patch_vera_quota: VeraFactory):
+    patch_vera_quota(QUOTA_LIMIT).check_quota()
 
 
 @responses.activate
-def test_invalid_quota_below_limit(patch_vera: VeraFactory):
-    vera = patch_vera(QUOTA_LIMIT - 1)
-    assert_that(vera.check_quota).raises(RandomOrgQuotaExceeded)
+def test_invalid_quota_below_limit(patch_vera_quota: VeraFactory):
+    assert_that(patch_vera_quota(QUOTA_LIMIT - 1).check_quota).raises(RandomOrgQuotaExceeded)
 
 
 @responses.activate
-def test_invalid_quota_response(patch_vera: VeraFactory):
+def test_invalid_quota_response():
     _patch_response(QUOTA_URL, status=500)
-    assert_that(patch_vera).raises(HTTPError)
+    assert_that(VeraRandom).raises(HTTPError)
 
 
-@mark.parametrize('response', [('17',)])
+@mark.parametrize('response', [('1\n2\n3\n4\n5', '6\n7\n8\n9\n0', '1\n1\n1\n1\n1')])
 @mark.xfail
 @responses.activate
-def test_random(patch_vera: VeraFactory, response: str):
-    vera = patch_vera()
-    _patch_int_response(response)
-
-    with mock.patch.object(vera, 'check_quota') as check_quota:
-        assert_that(patch_vera().random()).is_greater_than_or_equal_to(0).\
-            is_less_than(1)
-
-        check_quota.assert_called_once()
+def test_random(patch_vera_quota: VeraFactory, response: str):
+    assert_rand_call_output(patch_vera_quota(), 'random', mock_response=response,
+                            output=0.12345_67890_11111)
 
 
 @mark.parametrize('lower, upper, response', [(1, 20, '17')])
 @responses.activate
-def test_randint(patch_vera: VeraFactory, lower: int, upper: int, response: str):
-    vera = patch_vera()
-    _patch_int_response(response)
-
-    with mock.patch.object(vera, 'check_quota') as check_quota:
-        assert_that(vera.randint(lower, upper)).is_greater_than_or_equal_to(lower).\
-            is_less_than_or_equal_to(upper)
-
-        check_quota.assert_called_once()
+def test_randint(patch_vera_quota: VeraFactory, lower: int, upper: int, response: str):
+    assert_rand_call_output(patch_vera_quota(), 'randint', lower, upper, mock_response=response,
+                            output=17)
 
 
 @mark.parametrize('lower, upper, n, response', [(1, 3, 5, '3\n3\n1\n2\n1')])
 @responses.activate
-def test_randints(patch_vera: VeraFactory, lower: int, upper: int, n: int, response: str):
-    vera = patch_vera()
-    _patch_int_response(response)
+def test_randints(patch_vera_quota: VeraFactory, lower: int, upper: int, n: int, response: str):
+    assert_rand_call_output(patch_vera_quota(), 'randints', lower, upper, n, mock_response=response,
+                            output=[3, 3, 1, 2, 1])
+
+
+def assert_rand_call_output(vera: VeraRandom, method: str, *args, mock_response: str, output: Any):
+    _patch_int_response(mock_response)
 
     with mock.patch.object(vera, 'check_quota') as check_quota:
-        for random in vera.randints(lower, upper, n):
-            assert_that(random).is_greater_than_or_equal_to(lower).is_less_than_or_equal_to(upper)
+        assert_that(getattr(vera, method)(*args)).is_equal_to(output)
 
         check_quota.assert_called_once()

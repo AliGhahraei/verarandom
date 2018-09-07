@@ -63,8 +63,8 @@ class VeraRandom(Random):
         max_int = int('9' * number_of_digits)
 
         randints = self.randints(0, max_int, RandintsToFloatOptions.RANDINTS_QUANTITY)
-        zero_padded_ints = ''.join(str(randint).zfill(number_of_digits) for randint in randints)
-        return float(f"0.{zero_padded_ints}")
+        zero_padded_ints = (str(randint).zfill(number_of_digits) for randint in randints)
+        return float(f"0.{''.join(zero_padded_ints)}")
 
     def randint(self, a: int, b: int) -> int:
         return self.randints(a, b, 1)[0]

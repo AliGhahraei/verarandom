@@ -49,6 +49,15 @@ class VeraRandom(Random):
         self.remaining_quota = int(quota)
         super().__init__()
 
+    def seed(self, _=None, **kwargs):
+        pass
+
+    def getstate(self):
+        raise NotImplementedError
+
+    def setstate(self, state):
+        raise NotImplementedError
+
     def check_quota(self):
         """ Verify the user's IP can make requests. Should be called before generating numbers. """
         if self.remaining_quota < QUOTA_LIMIT:

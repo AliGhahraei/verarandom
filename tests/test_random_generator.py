@@ -52,33 +52,31 @@ def test_invalid_quota_response():
     assert_that(VeraRandom).raises(HTTPError)
 
 
-@mark.parametrize('mock_responses', [('1\n2\n3\n4\n5', '6\n7\n8\n9\n0', '1\n1\n1\n1\n1')])
+@mark.parametrize('mock_response', ['12345\n67890\n11111'])
 @mark.xfail
 @responses.activate
-def test_random(patch_vera_quota: VeraFactory, mock_responses: str):
+def test_random(patch_vera_quota: VeraFactory, mock_response: str):
     assert_rand_call_output(patch_vera_quota(), 'random',
-                            mock_responses=mock_responses, output=0.12345_67890_11111)
+                            mock_response=mock_response, output=0.12345_67890_11111)
 
 
-@mark.parametrize('lower, upper, mock_responses', [(1, 20, ('17',))])
+@mark.parametrize('lower, upper, mock_response', [(1, 20, '17')])
 @responses.activate
-def test_randint(patch_vera_quota: VeraFactory, lower: int, upper: int, mock_responses: str):
+def test_randint(patch_vera_quota: VeraFactory, lower: int, upper: int, mock_response: str):
     assert_rand_call_output(patch_vera_quota(), 'randint', lower, upper,
-                            mock_responses=mock_responses, output=17)
+                            mock_response=mock_response, output=17)
 
 
-@mark.parametrize('lower, upper, n, mock_responses', [(1, 3, 5, ('3\n3\n1\n2\n1',))])
+@mark.parametrize('lower, upper, n, mock_response', [(1, 3, 5, '3\n3\n1\n2\n1')])
 @responses.activate
 def test_randints(patch_vera_quota: VeraFactory, lower: int, upper: int, n: int,
-                  mock_responses: str):
+                  mock_response: str):
     assert_rand_call_output(patch_vera_quota(), 'randints', lower, upper, n,
-                            mock_responses=mock_responses, output=[3, 3, 1, 2, 1])
+                            mock_response=mock_response, output=[3, 3, 1, 2, 1])
 
 
-def assert_rand_call_output(vera: VeraRandom, method: str, *args, mock_responses: Iterable[str],
-                            output: Any):
-    for mock_response in mock_responses:
-        _patch_int_response(mock_response)
+def assert_rand_call_output(vera: VeraRandom, method: str, *args, mock_response: str, output: Any):
+    _patch_int_response(mock_response)
 
     with mock.patch.object(vera, 'check_quota') as check_quota:
         assert_that(getattr(vera, method)(*args)).is_equal_to(output)

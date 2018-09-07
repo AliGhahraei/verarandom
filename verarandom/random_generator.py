@@ -46,7 +46,7 @@ class VeraRandom(Random):
     def check_quota(self):
         """ Verify the user's IP can make requests. Should be called before generating numbers. """
         if self.remaining_quota < QUOTA_LIMIT:
-            raise RandomOrgQuotaExceeded
+            raise RandomOrgQuotaExceeded(self.remaining_quota)
 
     def random(self) -> float:
         raise NotImplementedError

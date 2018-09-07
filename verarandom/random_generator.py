@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import Enum, IntEnum
 from random import Random
 from typing import List, Dict, Optional
 
@@ -16,7 +16,13 @@ FORMAT = 'format'
 PLAIN_FORMAT = 'plain'
 
 
-class RandnumOptions(Enum):
+class RandintsToFloatOptions(IntEnum):
+    """ random.org's API doesn't offer floats, but a sequence of integers can emulate this. """
+    RANDINTS_QUANTITY = 3
+    RANDINTS_NUMBER_OF_DIGITS = 5
+
+
+class RandintRequestFields(Enum):
     RANDOMIZATION = 'rnd'
     TRULY_RANDOM = 'new'
     BASE = 'base'
@@ -49,17 +55,26 @@ class VeraRandom(Random):
             raise RandomOrgQuotaExceeded(self.remaining_quota)
 
     def random(self) -> float:
-        raise NotImplementedError
+        """ Generate a random float by using integers as its fractional part.
+
+        [06, 11, 21] => 0.061121
+        """
+        number_of_digits = RandintsToFloatOptions.RANDINTS_NUMBER_OF_DIGITS
+        max_int = int('9' * number_of_digits)
+
+        randints = self.randints(0, max_int, RandintsToFloatOptions.RANDINTS_QUANTITY)
+        zero_padded_ints = ''.join(str(randint).zfill(number_of_digits) for randint in randints)
+        return float(f"0.{zero_padded_ints}")
 
     def randint(self, a: int, b: int) -> int:
         return self.randints(a, b, 1)[0]
 
     def randints(self, a: int, b: int, n: int) -> List[int]:
         """ Same as randint, but generates n numbers at once. """
-        params = {RandnumOptions.RANDOMIZATION: RandnumOptions.TRULY_RANDOM,
-                  RandnumOptions.BASE: RandnumOptions.BASE_10,
-                  RandnumOptions.MIN: a, RandnumOptions.MAX: b,
-                  RandnumOptions.NUM: n, RandnumOptions.COL: 1}
+        params = {RandintRequestFields.RANDOMIZATION: RandintRequestFields.TRULY_RANDOM,
+                  RandintRequestFields.BASE: RandintRequestFields.BASE_10,
+                  RandintRequestFields.MIN: a, RandintRequestFields.MAX: b,
+                  RandintRequestFields.NUM: n, RandintRequestFields.COL: 1}
         numbers = self._get_random_response(INTEGER_URL, params=params)
 
         return [int(random) for random in numbers.splitlines()]

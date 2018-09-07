@@ -52,8 +52,8 @@ def test_invalid_quota_response():
     assert_that(VeraRandom).raises(HTTPError)
 
 
-@mark.xfail
-@mark.parametrize('mock_response, output', [('12345\n67890\n11111', 0.12345_67890_11111)])
+@mark.parametrize('mock_response, output', [('12345\n67890\n11111', 0.12345_67890_11111),
+                                            ('457\n98765\n4', 0.00457_98765_00004)])
 @responses.activate
 def test_random(patch_vera_quota: VeraFactory, mock_response: str, output: float):
     assert_rand_call_output(patch_vera_quota(), 'random',

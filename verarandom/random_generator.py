@@ -1,6 +1,6 @@
 from enum import Enum, IntEnum
 from random import Random
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Union
 
 from requests import get
 
@@ -38,10 +38,7 @@ class RandomOrgQuotaExceeded(Exception):
 
 
 class VeraRandom(Random):
-    """ Random number generator powered by random.org.
-
-    Provides the random.Random interface. You should call randints instead of calling randint
-    multiple times in order to minimize the number of requests you make.
+    """ True random (random.org) number generator implementing the random.Random interface.
     """
     def __init__(self):
         quota = self._get_text_response(QUOTA_URL)
@@ -71,22 +68,21 @@ class VeraRandom(Random):
         number_of_digits = RandintsToFloatOptions.RANDINTS_NUMBER_OF_DIGITS
         max_int = int('9' * number_of_digits)
 
-        randints = self.randints(0, max_int, RandintsToFloatOptions.RANDINTS_QUANTITY)
+        randints = self.randint(0, max_int, RandintsToFloatOptions.RANDINTS_QUANTITY)
         zero_padded_ints = (str(randint).zfill(number_of_digits) for randint in randints)
         return float(f"0.{''.join(zero_padded_ints)}")
 
-    def randint(self, a: int, b: int) -> int:
-        return self.randints(a, b, 1)[0]
-
-    def randints(self, a: int, b: int, n: int) -> List[int]:
-        """ Same as randint, but generates n numbers at once. """
+    def randint(self, a: int, b: int, n: int = 1) -> Union[List[int], int]:
+        """ Generates n integers at once as a list if n > 1 or as a single integer if n = 1. """
         params = {RandintRequestFields.RANDOMIZATION: RandintRequestFields.TRULY_RANDOM,
                   RandintRequestFields.BASE: RandintRequestFields.BASE_10,
                   RandintRequestFields.MIN: a, RandintRequestFields.MAX: b,
                   RandintRequestFields.NUM: n, RandintRequestFields.COL: 1}
         numbers = self._get_random_response(INTEGER_URL, params=params)
 
-        return [int(random) for random in numbers.splitlines()]
+        integers = [int(random) for random in numbers.splitlines()]
+
+        return integers if n > 1 else integers[0]
 
     @staticmethod
     def _get_text_response(url: str, params: Optional[Dict] = None) -> str:

@@ -62,8 +62,8 @@ def test_random(patch_vera_quota: VeraFactory, mock_response: str, output: float
 
 @mark.parametrize('lower, upper, mock_response, output', [(1, 20, '17', 17)])
 @responses.activate
-def test_randint(patch_vera_quota: VeraFactory, lower: int, upper: int, mock_response: str,
-                 output: int):
+def test_single_randint(patch_vera_quota: VeraFactory, lower: int, upper: int, mock_response: str,
+                        output: int):
     assert_rand_call_output(patch_vera_quota(), 'randint', lower, upper,
                             mock_response=mock_response, output=output)
 
@@ -71,9 +71,9 @@ def test_randint(patch_vera_quota: VeraFactory, lower: int, upper: int, mock_res
 @mark.parametrize('lower, upper, n, mock_response, output',
                   [(1, 3, 5, '3\n3\n1\n2\n1', [3, 3, 1, 2, 1])])
 @responses.activate
-def test_randints(patch_vera_quota: VeraFactory, lower: int, upper: int, n: int,
-                  mock_response: str, output: List[int]):
-    assert_rand_call_output(patch_vera_quota(), 'randints', lower, upper, n,
+def test_randints(patch_vera_quota: VeraFactory, lower: int, upper: int, n: int, mock_response: str,
+                  output: List[int]):
+    assert_rand_call_output(patch_vera_quota(), 'randint', lower, upper, n,
                             mock_response=mock_response, output=output)
 
 

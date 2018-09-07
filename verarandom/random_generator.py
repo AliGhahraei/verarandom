@@ -60,8 +60,7 @@ class VeraRandom(Random):
                   RandnumOptions.BASE: RandnumOptions.BASE_10,
                   RandnumOptions.MIN: a, RandnumOptions.MAX: b,
                   RandnumOptions.NUM: n, RandnumOptions.COL: 1}
-        numbers = self._get_random_response(INTEGER_URL,
-                                            params=params)
+        numbers = self._get_random_response(INTEGER_URL, params=params)
 
         return [int(random) for random in numbers.splitlines()]
 

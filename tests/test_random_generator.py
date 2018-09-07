@@ -1,4 +1,4 @@
-from typing import Callable, Any, Iterable
+from typing import Callable, Any, List
 from unittest import mock
 
 import responses
@@ -52,27 +52,29 @@ def test_invalid_quota_response():
     assert_that(VeraRandom).raises(HTTPError)
 
 
-@mark.parametrize('mock_response', ['12345\n67890\n11111'])
 @mark.xfail
+@mark.parametrize('mock_response, output', [('12345\n67890\n11111', 0.12345_67890_11111)])
 @responses.activate
-def test_random(patch_vera_quota: VeraFactory, mock_response: str):
+def test_random(patch_vera_quota: VeraFactory, mock_response: str, output: float):
     assert_rand_call_output(patch_vera_quota(), 'random',
-                            mock_response=mock_response, output=0.12345_67890_11111)
+                            mock_response=mock_response, output=output)
 
 
-@mark.parametrize('lower, upper, mock_response', [(1, 20, '17')])
+@mark.parametrize('lower, upper, mock_response, output', [(1, 20, '17', 17)])
 @responses.activate
-def test_randint(patch_vera_quota: VeraFactory, lower: int, upper: int, mock_response: str):
+def test_randint(patch_vera_quota: VeraFactory, lower: int, upper: int, mock_response: str,
+                 output: int):
     assert_rand_call_output(patch_vera_quota(), 'randint', lower, upper,
-                            mock_response=mock_response, output=17)
+                            mock_response=mock_response, output=output)
 
 
-@mark.parametrize('lower, upper, n, mock_response', [(1, 3, 5, '3\n3\n1\n2\n1')])
+@mark.parametrize('lower, upper, n, mock_response, output',
+                  [(1, 3, 5, '3\n3\n1\n2\n1', [3, 3, 1, 2, 1])])
 @responses.activate
 def test_randints(patch_vera_quota: VeraFactory, lower: int, upper: int, n: int,
-                  mock_response: str):
+                  mock_response: str, output: List[int]):
     assert_rand_call_output(patch_vera_quota(), 'randints', lower, upper, n,
-                            mock_response=mock_response, output=[3, 3, 1, 2, 1])
+                            mock_response=mock_response, output=output)
 
 
 def assert_rand_call_output(vera: VeraRandom, method: str, *args, mock_response: str, output: Any):

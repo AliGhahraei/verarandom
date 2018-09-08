@@ -12,6 +12,10 @@ INTEGER_URL = f'{RANDOM_ORG_URL}/integers'
 QUOTA_LIMIT = 0
 MAX_QUOTA = 1_000_000
 
+MAX_INTEGER = int(1e9)
+MIN_INTEGER = int(-1e9)
+MAX_NUMBER_OF_INTEGERS = int(1e4)
+
 FORMAT = 'format'
 PLAIN_FORMAT = 'plain'
 
@@ -33,8 +37,24 @@ class RandintRequestFields(Enum):
     COL = 'col'
 
 
-class RandomOrgQuotaExceeded(Exception):
+class VeraRandomError(Exception):
+    pass
+
+
+class BitQuotaExceeded(VeraRandomError):
     """ IP has exceeded bit quota and should not be allowed to make further requests. """
+
+
+class TooManyRandomNumbersRequested(VeraRandomError):
+    """ Attempted to request too many numbers to the generator's API """
+
+
+class RandomNumberTooLarge(VeraRandomError, ValueError):
+    """ Max random number requested is too large for the generator's API """
+
+
+class RandomNumberTooSmall(VeraRandomError, ValueError):
+    """ Min random number requested is too small for the generator's API """
 
 
 class VeraRandom(Random):
@@ -47,18 +67,32 @@ class VeraRandom(Random):
         super().__init__()
 
     def seed(self, _=None, **kwargs):
-        pass
+        """ Empty definition. """
 
     def getstate(self):
+        """ Not implemented. """
         raise NotImplementedError
 
     def setstate(self, state):
+        """ Not implemented. """
         raise NotImplementedError
 
     def check_quota(self):
         """ Verify the user's IP can make requests. Should be called before generating numbers. """
         if self.remaining_quota < QUOTA_LIMIT:
-            raise RandomOrgQuotaExceeded(self.remaining_quota)
+            raise BitQuotaExceeded(self.remaining_quota)
+
+    @staticmethod
+    def check_rand_parameters(a: int, b: int, n: int):
+        """ Check parameters are suitable for a random number request. """
+        if n > MAX_NUMBER_OF_INTEGERS:
+            raise TooManyRandomNumbersRequested(n)
+
+        if b > MAX_INTEGER:
+            raise RandomNumberTooLarge(b)
+
+        if a < MIN_INTEGER:
+            raise RandomNumberTooSmall(a)
 
     def random(self) -> float:
         """ Generate a random float by using integers as its fractional part.
@@ -74,6 +108,8 @@ class VeraRandom(Random):
 
     def randint(self, a: int, b: int, n: int = 1) -> Union[List[int], int]:
         """ Generates n integers at once as a list if n > 1 or as a single integer if n = 1. """
+        self.check_rand_parameters(a, b, n)
+
         params = {RandintRequestFields.RANDOMIZATION.value: RandintRequestFields.TRULY_RANDOM.value,
                   RandintRequestFields.BASE.value: RandintRequestFields.BASE_10.value,
                   RandintRequestFields.MIN.value: a, RandintRequestFields.MAX.value: b,

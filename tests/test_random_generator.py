@@ -8,8 +8,10 @@ from requests import HTTPError
 
 from verarandom.random_generator import (
     VeraRandom, QUOTA_URL, QUOTA_LIMIT, MAX_QUOTA, BitQuotaExceeded, INTEGER_URL,
-    MAX_NUMBER_OF_INTEGERS, TooManyRandomNumbersRequested, MAX_INTEGER, RandomNumberTooLarge,
-    MIN_INTEGER, RandomNumberTooSmall)
+    MAX_NUMBER_OF_INTEGERS, TooManyRandomNumbersRequested, MAX_INTEGER_LIMIT,
+    RandomNumberLimitTooLarge, NoRandomNumbersRequested, MIN_INTEGER_LIMIT,
+    RandomNumberLimitTooSmall
+)
 
 
 VeraFactory = Callable[..., VeraRandom]
@@ -90,25 +92,58 @@ def test_too_many_integers(patch_vera_quota: VeraRandom):
 
 
 @responses.activate
-def test_max_integer(patch_vera_quota: VeraRandom):
-    patch_vera_quota().check_rand_parameters(1, MAX_INTEGER, 1)
+def test_min_number_of_integers(patch_vera_quota: VeraRandom):
+    patch_vera_quota().check_rand_parameters(1, 5, 1)
 
 
 @responses.activate
-def test_integer_too_large(patch_vera_quota: VeraRandom):
-    assert_that(patch_vera_quota().check_rand_parameters).raises(RandomNumberTooLarge).\
-        when_called_with(1, MAX_INTEGER + 1, 1)
+def test_too_few_integers(patch_vera_quota: VeraRandom):
+    assert_that(patch_vera_quota().check_rand_parameters).raises(NoRandomNumbersRequested).\
+        when_called_with(1, 5, 0)
 
 
 @responses.activate
-def test_min_integer(patch_vera_quota: VeraRandom):
-    patch_vera_quota().check_rand_parameters(1, MIN_INTEGER, 1)
+def test_max_integer_upper_limit(patch_vera_quota: VeraRandom):
+    patch_vera_quota().check_rand_parameters(1, MAX_INTEGER_LIMIT, 1)
 
 
 @responses.activate
-def test_integer_too_small(patch_vera_quota: VeraRandom):
-    assert_that(patch_vera_quota().check_rand_parameters).raises(RandomNumberTooSmall).\
-        when_called_with(MIN_INTEGER - 1, 1, 1)
+def test_max_integer_too_large(patch_vera_quota: VeraRandom):
+    assert_that(patch_vera_quota().check_rand_parameters).raises(RandomNumberLimitTooLarge).\
+        when_called_with(1, MAX_INTEGER_LIMIT + 1, 1)
+
+
+@responses.activate
+def test_max_integer_lower_limit(patch_vera_quota: VeraRandom):
+    patch_vera_quota().check_rand_parameters(1, MIN_INTEGER_LIMIT, 1)
+
+
+@responses.activate
+def test_max_integer_too_small(patch_vera_quota: VeraRandom):
+    assert_that(patch_vera_quota().check_rand_parameters).raises(RandomNumberLimitTooSmall).\
+        when_called_with(1, MIN_INTEGER_LIMIT - 1, 1)
+
+
+@responses.activate
+def test_min_integer_upper_limit(patch_vera_quota: VeraRandom):
+    patch_vera_quota().check_rand_parameters(MAX_INTEGER_LIMIT, 1, 1)
+
+
+@responses.activate
+def test_min_integer_too_large(patch_vera_quota: VeraRandom):
+    assert_that(patch_vera_quota().check_rand_parameters).raises(RandomNumberLimitTooLarge).\
+        when_called_with(MAX_INTEGER_LIMIT + 1, 1, 1)
+
+
+@responses.activate
+def test_min_integer_lower_limit(patch_vera_quota: VeraRandom):
+    patch_vera_quota().check_rand_parameters(MIN_INTEGER_LIMIT, 1, 1)
+
+
+@responses.activate
+def test_min_integer_too_small(patch_vera_quota: VeraRandom):
+    assert_that(patch_vera_quota().check_rand_parameters).raises(RandomNumberLimitTooSmall).\
+        when_called_with(MIN_INTEGER_LIMIT - 1, 1, 1)
 
 
 def assert_rand_call_output(vera: VeraRandom, method: str, *args, mock_response: str, output: Any):

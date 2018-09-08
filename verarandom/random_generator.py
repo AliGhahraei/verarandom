@@ -12,8 +12,8 @@ INTEGER_URL = f'{RANDOM_ORG_URL}/integers'
 QUOTA_LIMIT = 0
 MAX_QUOTA = 1_000_000
 
-MAX_INTEGER = int(1e9)
-MIN_INTEGER = int(-1e9)
+MAX_INTEGER_LIMIT = int(1e9)
+MIN_INTEGER_LIMIT = int(-1e9)
 MAX_NUMBER_OF_INTEGERS = int(1e4)
 
 FORMAT = 'format'
@@ -45,15 +45,23 @@ class BitQuotaExceeded(VeraRandomError):
     """ IP has exceeded bit quota and should not be allowed to make further requests. """
 
 
-class TooManyRandomNumbersRequested(VeraRandomError):
+class RandomRequestFieldError(VeraRandomError, ValueError):
+    pass
+
+
+class NoRandomNumbersRequested(RandomRequestFieldError):
+    pass
+
+
+class TooManyRandomNumbersRequested(RandomRequestFieldError):
     """ Attempted to request too many numbers to the generator's API """
 
 
-class RandomNumberTooLarge(VeraRandomError, ValueError):
+class RandomNumberLimitTooLarge(RandomRequestFieldError):
     """ Max random number requested is too large for the generator's API """
 
 
-class RandomNumberTooSmall(VeraRandomError, ValueError):
+class RandomNumberLimitTooSmall(RandomRequestFieldError):
     """ Min random number requested is too small for the generator's API """
 
 
@@ -85,14 +93,17 @@ class VeraRandom(Random):
     @staticmethod
     def check_rand_parameters(a: int, b: int, n: int):
         """ Check parameters are suitable for a random number request. """
+        if n < 1:
+            raise NoRandomNumbersRequested(n)
+
         if n > MAX_NUMBER_OF_INTEGERS:
             raise TooManyRandomNumbersRequested(n)
 
-        if b > MAX_INTEGER:
-            raise RandomNumberTooLarge(b)
+        if a > MAX_INTEGER_LIMIT or b > MAX_INTEGER_LIMIT:
+            raise RandomNumberLimitTooLarge(b)
 
-        if a < MIN_INTEGER:
-            raise RandomNumberTooSmall(a)
+        if a < MIN_INTEGER_LIMIT or b < MIN_INTEGER_LIMIT:
+            raise RandomNumberLimitTooSmall(a)
 
     def random(self) -> float:
         """ Generate a random float by using integers as its fractional part.

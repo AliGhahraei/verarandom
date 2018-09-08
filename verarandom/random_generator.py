@@ -74,10 +74,10 @@ class VeraRandom(Random):
 
     def randint(self, a: int, b: int, n: int = 1) -> Union[List[int], int]:
         """ Generates n integers at once as a list if n > 1 or as a single integer if n = 1. """
-        params = {RandintRequestFields.RANDOMIZATION: RandintRequestFields.TRULY_RANDOM,
-                  RandintRequestFields.BASE: RandintRequestFields.BASE_10,
-                  RandintRequestFields.MIN: a, RandintRequestFields.MAX: b,
-                  RandintRequestFields.NUM: n, RandintRequestFields.COL: 1}
+        params = {RandintRequestFields.RANDOMIZATION.value: RandintRequestFields.TRULY_RANDOM.value,
+                  RandintRequestFields.BASE.value: RandintRequestFields.BASE_10.value,
+                  RandintRequestFields.MIN.value: a, RandintRequestFields.MAX.value: b,
+                  RandintRequestFields.NUM.value: n, RandintRequestFields.COL.value: 1}
         numbers = self._get_random_response(INTEGER_URL, params=params)
 
         integers = [int(random) for random in numbers.splitlines()]

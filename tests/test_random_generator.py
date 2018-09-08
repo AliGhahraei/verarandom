@@ -87,8 +87,8 @@ def test_max_number_of_integers(patch_vera_quota: VeraRandom):
 
 @responses.activate
 def test_too_many_integers(patch_vera_quota: VeraRandom):
-    assert_that(patch_vera_quota().check_rand_request_parameters).raises(TooManyRandomNumbersRequested).\
-        when_called_with(1, 5, MAX_NUMBER_OF_INTEGERS + 1)
+    assert_that(patch_vera_quota().check_rand_request_parameters).\
+        raises(TooManyRandomNumbersRequested).when_called_with(1, 5, MAX_NUMBER_OF_INTEGERS + 1)
 
 
 @responses.activate
@@ -109,8 +109,8 @@ def test_max_integer_upper_limit(patch_vera_quota: VeraRandom):
 
 @responses.activate
 def test_max_integer_too_large(patch_vera_quota: VeraRandom):
-    assert_that(patch_vera_quota().check_rand_request_parameters).raises(RandomNumberLimitTooLarge).\
-        when_called_with(1, MAX_INTEGER_LIMIT + 1, 1)
+    assert_that(patch_vera_quota().check_rand_request_parameters).\
+        raises(RandomNumberLimitTooLarge).when_called_with(1, MAX_INTEGER_LIMIT + 1, 1)
 
 
 @responses.activate
@@ -120,8 +120,8 @@ def test_max_integer_lower_limit(patch_vera_quota: VeraRandom):
 
 @responses.activate
 def test_max_integer_too_small(patch_vera_quota: VeraRandom):
-    assert_that(patch_vera_quota().check_rand_request_parameters).raises(RandomNumberLimitTooSmall).\
-        when_called_with(1, MIN_INTEGER_LIMIT - 1, 1)
+    assert_that(patch_vera_quota().check_rand_request_parameters).\
+        raises(RandomNumberLimitTooSmall).when_called_with(1, MIN_INTEGER_LIMIT - 1, 1)
 
 
 @responses.activate
@@ -131,8 +131,8 @@ def test_min_integer_upper_limit(patch_vera_quota: VeraRandom):
 
 @responses.activate
 def test_min_integer_too_large(patch_vera_quota: VeraRandom):
-    assert_that(patch_vera_quota().check_rand_request_parameters).raises(RandomNumberLimitTooLarge).\
-        when_called_with(MAX_INTEGER_LIMIT + 1, 1, 1)
+    assert_that(patch_vera_quota().check_rand_request_parameters).\
+        raises(RandomNumberLimitTooLarge).when_called_with(MAX_INTEGER_LIMIT + 1, 1, 1)
 
 
 @responses.activate
@@ -142,8 +142,8 @@ def test_min_integer_lower_limit(patch_vera_quota: VeraRandom):
 
 @responses.activate
 def test_min_integer_too_small(patch_vera_quota: VeraRandom):
-    assert_that(patch_vera_quota().check_rand_request_parameters).raises(RandomNumberLimitTooSmall).\
-        when_called_with(MIN_INTEGER_LIMIT - 1, 1, 1)
+    assert_that(patch_vera_quota().check_rand_request_parameters).\
+        raises(RandomNumberLimitTooSmall).when_called_with(MIN_INTEGER_LIMIT - 1, 1, 1)
 
 
 @mark.parametrize('lower, upper, n, mock_response, bits', [(1, 8, 3, '7\n1\n4', 7)])

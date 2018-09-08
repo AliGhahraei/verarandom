@@ -69,7 +69,7 @@ class VeraRandom(Random):
     """ True random (random.org) number generator implementing the random.Random interface.
     """
     def __init__(self):
-        quota = self._get_text_response(QUOTA_URL)
+        quota = self._make_plain_text_request(QUOTA_URL)
 
         self.remaining_quota = int(quota)
         super().__init__()
@@ -86,24 +86,28 @@ class VeraRandom(Random):
         raise NotImplementedError
 
     def check_quota(self):
-        """ Verify the user's IP can make requests. Should be called before generating numbers. """
+        """ If IP can't make requests, raise error. Should be called before generating numbers. """
         if self.remaining_quota < QUOTA_LIMIT:
             raise BitQuotaExceeded(self.remaining_quota)
 
-    @staticmethod
-    def check_rand_parameters(a: int, b: int, n: int):
+    def check_rand_request_parameters(self, a: int, b: int, n: int):
         """ Check parameters are suitable for a random number request. """
-        if n < 1:
-            raise NoRandomNumbersRequested(n)
+        self._check_number_of_randoms(n)
+        self._check_random_limits(a, b)
 
-        if n > MAX_NUMBER_OF_INTEGERS:
-            raise TooManyRandomNumbersRequested(n)
-
+    @staticmethod
+    def _check_random_limits(a: int, b: int):
         if a > MAX_INTEGER_LIMIT or b > MAX_INTEGER_LIMIT:
             raise RandomNumberLimitTooLarge(b)
-
         if a < MIN_INTEGER_LIMIT or b < MIN_INTEGER_LIMIT:
             raise RandomNumberLimitTooSmall(a)
+
+    @staticmethod
+    def _check_number_of_randoms(n: int):
+        if n < 1:
+            raise NoRandomNumbersRequested(n)
+        if n > MAX_NUMBER_OF_INTEGERS:
+            raise TooManyRandomNumbersRequested(n)
 
     def random(self) -> float:
         """ Generate a random float by using integers as its fractional part.
@@ -119,26 +123,33 @@ class VeraRandom(Random):
 
     def randint(self, a: int, b: int, n: int = 1) -> Union[List[int], int]:
         """ Generates n integers at once as a list if n > 1 or as a single integer if n = 1. """
-        self.check_rand_parameters(a, b, n)
-
-        params = {RandintRequestFields.RANDOMIZATION.value: RandintRequestFields.TRULY_RANDOM.value,
-                  RandintRequestFields.BASE.value: RandintRequestFields.BASE_10.value,
-                  RandintRequestFields.MIN.value: a, RandintRequestFields.MAX.value: b,
-                  RandintRequestFields.NUM.value: n, RandintRequestFields.COL.value: 1}
-        numbers = self._get_random_response(INTEGER_URL, params=params)
-
-        integers = [int(random) for random in numbers.splitlines()]
+        numbers_as_string = self._make_randint_request(a, b, n)
+        integers = [int(random) for random in numbers_as_string.splitlines()]
+        self.remaining_quota -= sum(integer.bit_length() for integer in integers)
 
         return integers if n > 1 else integers[0]
 
+    def _make_randint_request(self, a: int, b: int, n: int) -> str:
+        self.check_rand_request_parameters(a, b, n)
+        params = self._create_randint_request_params(a, b, n)
+        numbers_as_string = self._make_random_request(INTEGER_URL, params=params)
+        return numbers_as_string
+
     @staticmethod
-    def _get_text_response(url: str, params: Optional[Dict] = None) -> str:
+    def _create_randint_request_params(a: int, b: int, n: int) -> Dict:
+        return {RandintRequestFields.RANDOMIZATION.value: RandintRequestFields.TRULY_RANDOM.value,
+                RandintRequestFields.BASE.value: RandintRequestFields.BASE_10.value,
+                RandintRequestFields.MIN.value: a, RandintRequestFields.MAX.value: b,
+                RandintRequestFields.NUM.value: n, RandintRequestFields.COL.value: 1}
+
+    @staticmethod
+    def _make_plain_text_request(url: str, params: Optional[Dict] = None) -> str:
         params = params or {}
         response = get(url, params={FORMAT: PLAIN_FORMAT, **params})
         response.raise_for_status()
 
         return response.text
 
-    def _get_random_response(self, *args, **kwargs) -> str:
+    def _make_random_request(self, *args, **kwargs) -> str:
         self.check_quota()
-        return self._get_text_response(*args, **kwargs)
+        return self._make_plain_text_request(*args, **kwargs)

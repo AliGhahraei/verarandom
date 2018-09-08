@@ -82,67 +82,67 @@ def test_randints(patch_vera_quota: VeraFactory, lower: int, upper: int, n: int,
 
 @responses.activate
 def test_max_number_of_integers(patch_vera_quota: VeraRandom):
-    patch_vera_quota().check_rand_request_parameters(1, 5, MAX_NUMBER_OF_INTEGERS)
+    patch_vera_quota().check_randint_request_parameters(1, 5, MAX_NUMBER_OF_INTEGERS)
 
 
 @responses.activate
 def test_too_many_integers(patch_vera_quota: VeraRandom):
-    assert_that(patch_vera_quota().check_rand_request_parameters).\
+    assert_that(patch_vera_quota().check_randint_request_parameters).\
         raises(TooManyRandomNumbersRequested).when_called_with(1, 5, MAX_NUMBER_OF_INTEGERS + 1)
 
 
 @responses.activate
 def test_min_number_of_integers(patch_vera_quota: VeraRandom):
-    patch_vera_quota().check_rand_request_parameters(1, 5, 1)
+    patch_vera_quota().check_randint_request_parameters(1, 5, 1)
 
 
 @responses.activate
 def test_too_few_integers(patch_vera_quota: VeraRandom):
-    assert_that(patch_vera_quota().check_rand_request_parameters).raises(NoRandomNumbersRequested).\
+    assert_that(patch_vera_quota().check_randint_request_parameters).raises(NoRandomNumbersRequested).\
         when_called_with(1, 5, 0)
 
 
 @responses.activate
 def test_max_integer_upper_limit(patch_vera_quota: VeraRandom):
-    patch_vera_quota().check_rand_request_parameters(1, MAX_INTEGER_LIMIT, 1)
+    patch_vera_quota().check_randint_request_parameters(1, MAX_INTEGER_LIMIT, 1)
 
 
 @responses.activate
 def test_max_integer_too_large(patch_vera_quota: VeraRandom):
-    assert_that(patch_vera_quota().check_rand_request_parameters).\
+    assert_that(patch_vera_quota().check_randint_request_parameters).\
         raises(RandomNumberLimitTooLarge).when_called_with(1, MAX_INTEGER_LIMIT + 1, 1)
 
 
 @responses.activate
 def test_max_integer_lower_limit(patch_vera_quota: VeraRandom):
-    patch_vera_quota().check_rand_request_parameters(1, MIN_INTEGER_LIMIT, 1)
+    patch_vera_quota().check_randint_request_parameters(1, MIN_INTEGER_LIMIT, 1)
 
 
 @responses.activate
 def test_max_integer_too_small(patch_vera_quota: VeraRandom):
-    assert_that(patch_vera_quota().check_rand_request_parameters).\
+    assert_that(patch_vera_quota().check_randint_request_parameters).\
         raises(RandomNumberLimitTooSmall).when_called_with(1, MIN_INTEGER_LIMIT - 1, 1)
 
 
 @responses.activate
 def test_min_integer_upper_limit(patch_vera_quota: VeraRandom):
-    patch_vera_quota().check_rand_request_parameters(MAX_INTEGER_LIMIT, 1, 1)
+    patch_vera_quota().check_randint_request_parameters(MAX_INTEGER_LIMIT, 1, 1)
 
 
 @responses.activate
 def test_min_integer_too_large(patch_vera_quota: VeraRandom):
-    assert_that(patch_vera_quota().check_rand_request_parameters).\
+    assert_that(patch_vera_quota().check_randint_request_parameters).\
         raises(RandomNumberLimitTooLarge).when_called_with(MAX_INTEGER_LIMIT + 1, 1, 1)
 
 
 @responses.activate
 def test_min_integer_lower_limit(patch_vera_quota: VeraRandom):
-    patch_vera_quota().check_rand_request_parameters(MIN_INTEGER_LIMIT, 1, 1)
+    patch_vera_quota().check_randint_request_parameters(MIN_INTEGER_LIMIT, 1, 1)
 
 
 @responses.activate
 def test_min_integer_too_small(patch_vera_quota: VeraRandom):
-    assert_that(patch_vera_quota().check_rand_request_parameters).\
+    assert_that(patch_vera_quota().check_randint_request_parameters).\
         raises(RandomNumberLimitTooSmall).when_called_with(MIN_INTEGER_LIMIT - 1, 1, 1)
 
 
@@ -160,7 +160,7 @@ def assert_rand_call_output(vera: VeraRandom, method: str, *args, mock_response:
     _patch_int_response(mock_response)
 
     with mock.patch.object(vera, 'check_quota') as check_quota, \
-            mock.patch.object(vera, 'check_rand_request_parameters') as check_parameters:
+            mock.patch.object(vera, 'check_randint_request_parameters') as check_parameters:
         assert_that(getattr(vera, method)(*args)).is_equal_to(output)
 
         check_quota.assert_called_once()

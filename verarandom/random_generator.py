@@ -89,20 +89,20 @@ class VeraRandom(Random):
         if self.remaining_quota < QUOTA_LIMIT:
             raise BitQuotaExceeded(self.remaining_quota)
 
-    def check_rand_request_parameters(self, a: int, b: int, n: int):
+    def check_randint_request_parameters(self, a: int, b: int, n: int):
         """ Check parameters for a random request and potentially raise RandomRequestFieldError. """
-        self._check_number_of_randoms(n)
-        self._check_random_limits(a, b)
+        self._check_number_of_randints(n)
+        self._check_randint_range(a, b)
 
     @staticmethod
-    def _check_random_limits(a: int, b: int):
+    def _check_randint_range(a: int, b: int):
         if a > MAX_INTEGER_LIMIT or b > MAX_INTEGER_LIMIT:
             raise RandomNumberLimitTooLarge(b)
         if a < MIN_INTEGER_LIMIT or b < MIN_INTEGER_LIMIT:
             raise RandomNumberLimitTooSmall(a)
 
     @staticmethod
-    def _check_number_of_randoms(n: int):
+    def _check_number_of_randints(n: int):
         if n < 1:
             raise NoRandomNumbersRequested(n)
         if n > MAX_NUMBER_OF_INTEGERS:
@@ -129,7 +129,7 @@ class VeraRandom(Random):
         return integers if n > 1 else integers[0]
 
     def _make_randint_request(self, a: int, b: int, n: int) -> str:
-        self.check_rand_request_parameters(a, b, n)
+        self.check_randint_request_parameters(a, b, n)
         params = self._create_randint_request_params(a, b, n)
         numbers_as_string = self._make_random_request(INTEGER_URL, params=params)
         return numbers_as_string

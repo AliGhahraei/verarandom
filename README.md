@@ -12,7 +12,7 @@ This module provides a random.Random subclass, so it implements all [random func
 https://docs.python.org/3/library/random.html) (excluding [Bookkeeping functions](
 https://docs.python.org/3/library/random.html#bookkeeping-functions)) with true randomness. It
 requires an internet connection to work and will raise a ConnectionError if the server doesn't
-respond or a verarandom.VeraRandomError if there is another problem with the request.
+respond or a subclass of verarandom.VeraRandomError if there is another problem with the request.
 
 ```python
 >>> from verarandom import VeraRandom
@@ -30,6 +30,8 @@ respond or a verarandom.VeraRandomError if there is another problem with the req
 >>> r.randint(-10, 3)  # If no n is passed it returns a number, not a list (like the parent method)
 -2
 
+>>> r.random()
+0.040120765652295
 >>> r.choice(['rock', 'paper', 'scissors'])
 'scissors'
 ```

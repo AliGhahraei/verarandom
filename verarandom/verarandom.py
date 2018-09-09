@@ -68,8 +68,22 @@ class RandomNumberLimitTooSmall(RandomRequestFieldError):
 class VeraRandom(Random):
     """ True random (random.org) number generator implementing the random.Random interface. """
     def __init__(self):
-        self.remaining_quota = None
+        self._remaining_quota = None
         super().__init__()
+
+    @property
+    def remaining_quota(self):
+        self._request_quota_if_unset()
+        return self._remaining_quota
+
+    def _request_quota_if_unset(self):
+        if self._remaining_quota is None:
+            self.request_quota()
+
+    def request_quota(self) -> int:
+        """ Request bit quota from random.org """
+        self._remaining_quota = int(self._make_plain_text_request(QUOTA_URL))
+        return self._remaining_quota
 
     def seed(self, *args, **kwargs):
         """ Empty definition. """
@@ -84,16 +98,10 @@ class VeraRandom(Random):
 
     def check_quota(self):
         """ If IP can't make requests, raise BitQuotaExceeded. Called before generating numbers. """
-        self.request_quota()
+        self._request_quota_if_unset()
 
         if self.remaining_quota < QUOTA_LIMIT:
             raise BitQuotaExceeded(self.remaining_quota)
-
-    def request_quota(self) -> int:
-        if self.remaining_quota is None:
-            quota = int(self._make_plain_text_request(QUOTA_URL))
-            self.remaining_quota = quota
-            return quota
 
     def check_randint_request_parameters(self, a: int, b: int, n: int):
         """ Check parameters for a random request and potentially raise RandomRequestFieldError. """
@@ -131,7 +139,7 @@ class VeraRandom(Random):
         n_or_default = 1 if n is None else n
         numbers_as_string = self._make_randint_request(a, b, n_or_default)
         integers = [int(random) for random in numbers_as_string.splitlines()]
-        self.remaining_quota -= sum(integer.bit_length() for integer in integers)
+        self._remaining_quota -= sum(integer.bit_length() for integer in integers)
 
         return integers if n else integers[0]
 

@@ -56,6 +56,11 @@ def test_invalid_quota_below_limit(patch_vera_quota: VeraFactory):
 
 
 @responses.activate
+def test_quota_property(patch_vera_quota: VeraFactory):
+    assert_that(patch_vera_quota(500).remaining_quota).is_equal_to(500)
+
+
+@responses.activate
 def test_invalid_quota_response():
     _patch_response(QUOTA_URL, status=500)
     assert_that(VeraRandom).raises(HTTPError)
@@ -160,7 +165,7 @@ def test_quota_diminishes_after_request(patch_vera_quota: VeraRandom, lower: int
 
 def assert_rand_call_output(vera: VeraRandom, method: str, *args, mock_response: str, output: Any):
     _patch_int_response(mock_response)
-    mock_check_quota = mock.MagicMock(side_effect=vera.request_quota)
+    mock_check_quota = mock.MagicMock(side_effect=vera._request_quota_if_unset)
     _assert_patched_random_call(vera, method, args, mock_check_quota, output)
 
 

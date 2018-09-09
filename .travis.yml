@@ -3,7 +3,7 @@ python:
   - "3.6"
 install:
   - pip install pipenv
-  - pipenv install --ignore-pipfile .
+  - pipenv install --dev --ignore-pipfile .
 script:
   - pytest --cov=.
 after_success:

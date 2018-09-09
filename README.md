@@ -18,7 +18,7 @@ This module provides a random.Random subclass, so it implements all [random func
 1000000
 >>> r.randint(1, 10, n=5)
 [3, 4, 10, 3, 7]
->>> r.remaining_quota  # bits are deducted from quota
+>>> r.remaining_quota  # bits were deducted from quota
 999986
 
 >>> r.randint(-10, 3)  # A call without the number of integers returns 1, not a list

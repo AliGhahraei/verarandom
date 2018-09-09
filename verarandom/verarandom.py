@@ -1,6 +1,6 @@
 from enum import Enum, IntEnum
 from random import Random
-from typing import List, Dict, Optional, Union, Optional
+from typing import List, Dict, Union, Optional
 
 from requests import get
 

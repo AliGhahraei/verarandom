@@ -68,9 +68,7 @@ class RandomNumberLimitTooSmall(RandomRequestFieldError):
 class VeraRandom(Random):
     """ True random (random.org) number generator implementing the random.Random interface. """
     def __init__(self):
-        quota = self._make_plain_text_request(QUOTA_URL)
-        self.remaining_quota = int(quota)
-
+        self.remaining_quota = None
         super().__init__()
 
     def seed(self, *args, **kwargs):
@@ -86,8 +84,15 @@ class VeraRandom(Random):
 
     def check_quota(self):
         """ If IP can't make requests, raise BitQuotaExceeded. Called before generating numbers. """
+        self._request_quota()
+
         if self.remaining_quota < QUOTA_LIMIT:
             raise BitQuotaExceeded(self.remaining_quota)
+
+    def _request_quota(self):
+        if self.remaining_quota is None:
+            quota = int(self._make_plain_text_request(QUOTA_URL))
+            self.remaining_quota = quota
 
     def check_randint_request_parameters(self, a: int, b: int, n: int):
         """ Check parameters for a random request and potentially raise RandomRequestFieldError. """

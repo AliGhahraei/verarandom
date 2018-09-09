@@ -1,4 +1,4 @@
-from typing import Callable, Any, List
+from typing import Callable, Any, List, Tuple
 from unittest import mock
 
 import responses
@@ -158,8 +158,13 @@ def test_quota_diminishes_after_request(patch_vera_quota: VeraRandom, lower: int
 
 def assert_rand_call_output(vera: VeraRandom, method: str, *args, mock_response: str, output: Any):
     _patch_int_response(mock_response)
+    mock_check_quota = mock.MagicMock(side_effect=vera._request_quota)
+    _assert_patched_random_call(vera, method, args, mock_check_quota, output)
 
-    with mock.patch.object(vera, 'check_quota') as check_quota, \
+
+def _assert_patched_random_call(vera: VeraRandom, method: str, args: Tuple,
+                                mock_check_quota: Callable, output: str):
+    with mock.patch.object(vera, 'check_quota', mock_check_quota) as check_quota, \
             mock.patch.object(vera, 'check_randint_request_parameters') as check_parameters:
         assert_that(getattr(vera, method)(*args)).is_equal_to(output)
 

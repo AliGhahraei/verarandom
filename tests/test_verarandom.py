@@ -152,7 +152,7 @@ def test_quota_diminishes_after_request(patch_vera_quota: VeraRandom, lower: int
 
 def assert_rand_call_output(vera: VeraRandom, method: str, *args, mock_response: str, output: Any):
     _patch_int_response(mock_response)
-    mock_check_quota = mock.MagicMock(side_effect=vera._request_quota)
+    mock_check_quota = mock.MagicMock(side_effect=vera.request_quota)
     _assert_patched_random_call(vera, method, args, mock_check_quota, output)
 
 

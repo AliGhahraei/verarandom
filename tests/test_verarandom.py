@@ -35,12 +35,17 @@ def _patch_response(url: str, method: str=responses.GET, **kwargs):
 
 
 @responses.activate
-def test_valid_quota(patch_vera_quota: VeraFactory):
-    patch_vera_quota().check_quota()
+def test_max_quota(patch_vera_quota: VeraFactory):
+    patch_vera_quota(MAX_QUOTA).check_quota()
 
 
 @responses.activate
-def test_valid_quota_at_limit(patch_vera_quota: VeraFactory):
+def test_valid_quota(patch_vera_quota: VeraFactory):
+    patch_vera_quota(1000).check_quota()
+
+
+@responses.activate
+def test_quota_limit(patch_vera_quota: VeraFactory):
     patch_vera_quota(QUOTA_LIMIT).check_quota()
 
 

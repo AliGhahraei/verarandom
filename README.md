@@ -8,7 +8,11 @@
 True random numbers (provided by random.org) in Python
 
 # Usage
-This module provides a random.Random subclass, so it implements all [random functions](https://docs.python.org/3/library/random.html) (excluding [Bookkeeping functions](https://docs.python.org/3/library/random.html#bookkeeping-functions)) with true randomness. It requires an internet connection to work and will raise a ConnectionError if the server doesn't respond or a VeraRandomError if there is another problem with the request.
+This module provides a random.Random subclass, so it implements all [random functions](
+https://docs.python.org/3/library/random.html) (excluding [Bookkeeping functions](
+https://docs.python.org/3/library/random.html#bookkeeping-functions)) with true randomness. It 
+requires an internet connection to work and will raise a ConnectionError if the server doesn't 
+respond or a VeraRandomError if there is another problem with the request.
 
 ```python
 >>> from verarandom import VeraRandom

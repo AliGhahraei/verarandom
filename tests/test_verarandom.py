@@ -98,8 +98,8 @@ def test_min_number_of_integers(patch_vera_quota: VeraRandom):
 
 @responses.activate
 def test_too_few_integers(patch_vera_quota: VeraRandom):
-    assert_that(patch_vera_quota().check_randint_request_parameters).raises(NoRandomNumbersRequested).\
-        when_called_with(1, 5, 0)
+    assert_that(patch_vera_quota().check_randint_request_parameters).\
+        raises(NoRandomNumbersRequested).when_called_with(1, 5, 0)
 
 
 @responses.activate

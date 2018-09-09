@@ -77,6 +77,14 @@ def test_single_randint(patch_vera_quota: VeraFactory, lower: int, upper: int, m
                             mock_response=mock_response, output=output)
 
 
+@mark.parametrize('lower, upper, mock_response, output', [(1, 5, '3', [3])])
+@responses.activate
+def test_single_randint_as_list(patch_vera_quota: VeraFactory, lower: int, upper: int,
+                                mock_response: str, output: int):
+    assert_rand_call_output(patch_vera_quota(), 'randint', lower, upper, 1,
+                            mock_response=mock_response, output=output)
+
+
 @mark.parametrize('lower, upper, n, mock_response, output',
                   [(1, 3, 5, '3\n3\n1\n2\n1', [3, 3, 1, 2, 1])])
 @responses.activate

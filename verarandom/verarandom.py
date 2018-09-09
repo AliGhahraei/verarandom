@@ -1,6 +1,6 @@
 from enum import Enum, IntEnum
 from random import Random
-from typing import List, Dict, Optional, Union
+from typing import List, Dict, Optional, Union, Optional
 
 from requests import get
 
@@ -126,13 +126,14 @@ class VeraRandom(Random):
         zero_padded_ints = (str(randint).zfill(number_of_digits) for randint in randints)
         return float(f"0.{''.join(zero_padded_ints)}")
 
-    def randint(self, a: int, b: int, n: int = 1) -> Union[List[int], int]:
+    def randint(self, a: int, b: int, n: Optional[int] = None) -> Union[List[int], int]:
         """ Generates n integers at once as a list if n > 1 or as a single integer if n = 1. """
-        numbers_as_string = self._make_randint_request(a, b, n)
+        n_or_default = n or 1
+        numbers_as_string = self._make_randint_request(a, b, n_or_default)
         integers = [int(random) for random in numbers_as_string.splitlines()]
         self.remaining_quota -= sum(integer.bit_length() for integer in integers)
 
-        return integers if n > 1 else integers[0]
+        return integers if n else integers[0]
 
     def _make_randint_request(self, a: int, b: int, n: int) -> str:
         self.check_randint_request_parameters(a, b, n)

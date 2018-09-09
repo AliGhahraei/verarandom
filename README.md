@@ -14,6 +14,8 @@ https://docs.python.org/3/library/random.html#bookkeeping-functions)) with true 
 requires an internet connection to work and will raise a ConnectionError if the server doesn't
 respond or a subclass of verarandom.VeraRandomError if there is another problem with the request.
 
+NOTE: this class assumes it's the only one talking to random.org when calculating its quota.
+
 ```python
 >>> from verarandom import VeraRandom
 >>> r = VeraRandom()

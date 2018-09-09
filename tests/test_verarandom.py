@@ -3,7 +3,7 @@ from unittest import mock
 
 import responses
 from assertpy import assert_that
-from pytest import fixture, mark
+from pytest import fixture, mark, raises
 from requests import HTTPError
 
 from verarandom import (
@@ -51,7 +51,8 @@ def test_quota_limit(patch_vera_quota: VeraFactory):
 
 @responses.activate
 def test_invalid_quota_below_limit(patch_vera_quota: VeraFactory):
-    assert_that(patch_vera_quota(QUOTA_LIMIT - 1).check_quota).raises(BitQuotaExceeded)
+    with raises(BitQuotaExceeded):
+        patch_vera_quota(QUOTA_LIMIT - 1).check_quota()
 
 
 @responses.activate

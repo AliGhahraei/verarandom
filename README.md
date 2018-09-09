@@ -14,10 +14,16 @@ This module provides a random.Random subclass, so it implements all [random func
 >>> from verarandom import VeraRandom
 >>> r = VeraRandom()
 
->>> r.randint(1, 10, n=5)  # You may specify the number of integers to request
+>>> r.remaining_quota
+1000000
+>>> r.randint(1, 10, n=5)
 [3, 4, 10, 3, 7]
->>> r.randint(-10, 3)
+>>> r.remaining_quota  # bits are deducted from quota
+999986
+
+>>> r.randint(-10, 3)  # A call without the number of integers returns 1, not a list
 -2
+
 >>> r.choice(['rock', 'paper', 'scissors'])
 'scissors'
 ```

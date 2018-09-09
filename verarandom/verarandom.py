@@ -127,7 +127,7 @@ class VeraRandom(Random):
         return float(f"0.{''.join(zero_padded_ints)}")
 
     def randint(self, a: int, b: int, n: Optional[int] = None) -> Union[List[int], int]:
-        """ Generates n integers at once as a list if n > 1 or as a single integer if n = 1. """
+        """ Generates n integers as a list or as a single integer if no n is given. """
         n_or_default = 1 if n is None else n
         numbers_as_string = self._make_randint_request(a, b, n_or_default)
         integers = [int(random) for random in numbers_as_string.splitlines()]

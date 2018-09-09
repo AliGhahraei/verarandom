@@ -110,7 +110,7 @@ class VeraRandom(Random):
     @staticmethod
     def _check_number_of_randints(n: int):
         if n < 1:
-            raise NoRandomNumbersRequested(n)
+            raise NoRandomNumbersRequested
         if n > MAX_NUMBER_OF_INTEGERS:
             raise TooManyRandomNumbersRequested(n)
 
@@ -128,7 +128,7 @@ class VeraRandom(Random):
 
     def randint(self, a: int, b: int, n: Optional[int] = None) -> Union[List[int], int]:
         """ Generates n integers at once as a list if n > 1 or as a single integer if n = 1. """
-        n_or_default = n or 1
+        n_or_default = 1 if n is None else n
         numbers_as_string = self._make_randint_request(a, b, n_or_default)
         integers = [int(random) for random in numbers_as_string.splitlines()]
         self.remaining_quota -= sum(integer.bit_length() for integer in integers)

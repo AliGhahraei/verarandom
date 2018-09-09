@@ -21,7 +21,9 @@ This module provides a random.Random subclass, so it implements all [random func
 >>> r.remaining_quota  # bits were deducted from quota
 999986
 
->>> r.randint(-10, 3)  # A call without the number of integers returns 1, not a list
+>>> r.randint(3, 5, n=1)
+[5]
+>>> r.randint(-10, 3)  # If no n is passed it returns a number, not a list (like the parent method)
 -2
 
 >>> r.choice(['rock', 'paper', 'scissors'])

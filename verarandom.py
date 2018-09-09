@@ -113,10 +113,10 @@ class VeraRandom(Random):
 
         [06, 11, 21] => 0.061121
         """
-        number_of_digits = RandintsToFloatOptions.RANDINTS_NUMBER_OF_DIGITS
+        number_of_digits = RandintsToFloatOptions.RANDINTS_NUMBER_OF_DIGITS.value
         max_int = int('9' * number_of_digits)
 
-        randints = self.randint(0, max_int, RandintsToFloatOptions.RANDINTS_QUANTITY)
+        randints = self.randint(0, max_int, RandintsToFloatOptions.RANDINTS_QUANTITY.value)
         zero_padded_ints = (str(randint).zfill(number_of_digits) for randint in randints)
         return float(f"0.{''.join(zero_padded_ints)}")
 

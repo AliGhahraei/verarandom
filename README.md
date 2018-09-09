@@ -12,7 +12,7 @@ This module provides a random.Random subclass, so it implements all [random func
 https://docs.python.org/3/library/random.html) (excluding [Bookkeeping functions](
 https://docs.python.org/3/library/random.html#bookkeeping-functions)) with true randomness. It
 requires an internet connection to work and will raise a ConnectionError if the server doesn't
-respond, an requests.HTTPError or a subclass of verarandom.VeraRandomError if there is a problem 
+respond, a requests.HTTPError or a subclass of verarandom.VeraRandomError if there is a problem 
 with the request's parameters.
 
 NOTE: this class assumes it's the only one talking to random.org when calculating its quota.

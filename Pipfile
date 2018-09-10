@@ -4,14 +4,13 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-requests = "*"
+verarandom = {editable = true, path = "."}
 
 [dev-packages]
 pytest = "*"
 responses = "*"
 assertpy = "*"
 pytest-cov = "*"
-verarandom = {editable = true, path = "."}
 
 [requires]
 python_version = "3.7"

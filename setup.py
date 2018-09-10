@@ -5,7 +5,7 @@ with open("README.md") as f:
 
 setup(
     name='verarandom',
-    version='1.0.0',
+    version='1.0.1',
     description='True random numbers (provided by random.org) in Python',
     author='Ali Ghahraei Figueroa',
     author_email='aligf94@gmail.com',
@@ -15,6 +15,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
 
+    install_requires=['requests'],
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",

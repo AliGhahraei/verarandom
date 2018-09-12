@@ -57,7 +57,7 @@ def test_invalid_quota_below_limit(patch_vera_quota: VeraFactory):
 
 @responses.activate
 def test_quota_property(patch_vera_quota: VeraFactory):
-    assert_that(patch_vera_quota(500).remaining_quota).is_equal_to(500)
+    assert_that(patch_vera_quota(500).quota_estimate).is_equal_to(500)
 
 
 @responses.activate
@@ -159,7 +159,7 @@ def test_quota_diminishes_after_request(patch_vera_quota: VeraRandom, lower: int
     _patch_int_response(mock_response)
     vera_random = patch_vera_quota()
     vera_random.randint(lower, upper, 4)
-    assert_that(vera_random.remaining_quota).is_equal_to(MAX_QUOTA - bits)
+    assert_that(vera_random.quota_estimate).is_equal_to(MAX_QUOTA - bits)
 
 
 def assert_rand_call_output(vera: VeraRandom, method: str, *args, mock_response: str, output: Any):

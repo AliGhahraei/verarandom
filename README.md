@@ -21,11 +21,11 @@ NOTE: this class assumes it's the only one talking to random.org when calculatin
 >>> from verarandom import VeraRandom
 >>> r = VeraRandom()
 
->>> r.remaining_quota
+>>> r.quota_estimate
 1000000
 >>> r.randint(1, 10, n=5)
 [3, 4, 10, 3, 7]
->>> r.remaining_quota  # bits were deducted from quota
+>>> r.quota_estimate  # bits were deducted from quota
 999986
 
 >>> r.randint(3, 5, n=1)

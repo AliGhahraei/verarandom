@@ -72,7 +72,7 @@ class VeraRandom(Random):
         super().__init__()
 
     @property
-    def remaining_quota(self):
+    def quota_estimate(self):
         self._request_quota_if_unset()
         return self._remaining_quota
 
@@ -100,8 +100,8 @@ class VeraRandom(Random):
         """ If IP can't make requests, raise BitQuotaExceeded. Called before generating numbers. """
         self._request_quota_if_unset()
 
-        if self.remaining_quota < QUOTA_LIMIT:
-            raise BitQuotaExceeded(self.remaining_quota)
+        if self.quota_estimate < QUOTA_LIMIT:
+            raise BitQuotaExceeded(self.quota_estimate)
 
     def _check_randint_request_parameters(self, a: int, b: int, n: int):
         """ Check parameters for a random request and potentially raise RandomRequestFieldError. """

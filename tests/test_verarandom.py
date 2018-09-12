@@ -1,4 +1,4 @@
-from typing import Callable, Any, List, Tuple
+from typing import Callable, Any, List, Tuple, Type
 from unittest import mock
 
 import responses
@@ -99,58 +99,57 @@ def test_randints(patch_vera_quota: VeraFactory, lower: int, upper: int, n: int,
                             mock_response=mock_response, output=output)
 
 
-def test_max_number_of_integers():
-    VeraRandom().check_randint_request_parameters(1, 5, MAX_NUMBER_OF_INTEGERS)
+def test_max_number_of_integers(patch_vera_quota: VeraFactory):
+    _check_randint_request_parameters(patch_vera_quota(), 1, 5, MAX_NUMBER_OF_INTEGERS)
 
 
-def test_too_many_integers():
-    assert_that(VeraRandom().check_randint_request_parameters).\
-        raises(TooManyRandomNumbersRequested).when_called_with(1, 5, MAX_NUMBER_OF_INTEGERS + 1)
+def test_too_many_integers(patch_vera_quota: VeraFactory):
+    _assert_randint_exception(patch_vera_quota(), TooManyRandomNumbersRequested, 1, 5,
+                              MAX_NUMBER_OF_INTEGERS + 1)
 
 
-def test_min_number_of_integers():
-    VeraRandom().check_randint_request_parameters(1, 5, 1)
+def test_min_number_of_integers(patch_vera_quota: VeraFactory):
+    _check_randint_request_parameters(patch_vera_quota(), 1, 5, 1)
 
 
-def test_too_few_integers():
-    assert_that(VeraRandom().check_randint_request_parameters).\
-        raises(NoRandomNumbersRequested).when_called_with(1, 5, 0)
+def test_too_few_integers(patch_vera_quota: VeraFactory):
+    _assert_randint_exception(patch_vera_quota(), NoRandomNumbersRequested, 1, 5, 0)
 
 
-def test_max_integer_upper_limit():
-    VeraRandom().check_randint_request_parameters(1, MAX_INTEGER_LIMIT, 1)
+def test_max_integer_upper_limit(patch_vera_quota: VeraFactory):
+    _check_randint_request_parameters(patch_vera_quota(), 1, MAX_INTEGER_LIMIT, 1)
 
 
-def test_max_integer_too_large():
-    assert_that(VeraRandom().check_randint_request_parameters).\
-        raises(RandomNumberLimitTooLarge).when_called_with(1, MAX_INTEGER_LIMIT + 1, 1)
+def test_max_integer_too_large(patch_vera_quota: VeraFactory):
+    _assert_randint_exception(patch_vera_quota(), RandomNumberLimitTooLarge, 1,
+                              MAX_INTEGER_LIMIT + 1, 1)
 
 
-def test_max_integer_lower_limit():
-    VeraRandom().check_randint_request_parameters(1, MIN_INTEGER_LIMIT, 1)
+def test_max_integer_lower_limit(patch_vera_quota: VeraFactory):
+    _check_randint_request_parameters(patch_vera_quota(), 1, MIN_INTEGER_LIMIT, 1)
 
 
-def test_max_integer_too_small():
-    assert_that(VeraRandom().check_randint_request_parameters).\
-        raises(RandomNumberLimitTooSmall).when_called_with(1, MIN_INTEGER_LIMIT - 1, 1)
+def test_max_integer_too_small(patch_vera_quota: VeraFactory):
+    _assert_randint_exception(patch_vera_quota(), RandomNumberLimitTooSmall, 1,
+                              MIN_INTEGER_LIMIT - 1, 1)
 
 
-def test_min_integer_upper_limit():
-    VeraRandom().check_randint_request_parameters(MAX_INTEGER_LIMIT, 1, 1)
+def test_min_integer_upper_limit(patch_vera_quota: VeraFactory):
+    _check_randint_request_parameters(patch_vera_quota(), MAX_INTEGER_LIMIT, 1, 1)
 
 
-def test_min_integer_too_large():
-    assert_that(VeraRandom().check_randint_request_parameters).\
-        raises(RandomNumberLimitTooLarge).when_called_with(MAX_INTEGER_LIMIT + 1, 1, 1)
+def test_min_integer_too_large(patch_vera_quota: VeraFactory):
+    _assert_randint_exception(patch_vera_quota(), RandomNumberLimitTooLarge, MAX_INTEGER_LIMIT + 1,
+                              1, 1)
 
 
-def test_min_integer_lower_limit():
-    VeraRandom().check_randint_request_parameters(MIN_INTEGER_LIMIT, 1, 1)
+def test_min_integer_lower_limit(patch_vera_quota: VeraFactory):
+    _check_randint_request_parameters(patch_vera_quota(), MIN_INTEGER_LIMIT, 1, 1)
 
 
-def test_min_integer_too_small():
-    assert_that(VeraRandom().check_randint_request_parameters).\
-        raises(RandomNumberLimitTooSmall).when_called_with(MIN_INTEGER_LIMIT - 1, 1, 1)
+def test_min_integer_too_small(patch_vera_quota: VeraFactory):
+    _assert_randint_exception(patch_vera_quota(), RandomNumberLimitTooSmall, MIN_INTEGER_LIMIT - 1,
+                              1, 1)
 
 
 @mark.parametrize('lower, upper, n, mock_response, bits', [(1, 8, 3, '7\n1\n4', 7)])
@@ -172,8 +171,17 @@ def assert_rand_call_output(vera: VeraRandom, method: str, *args, mock_response:
 def _assert_patched_random_call(vera: VeraRandom, method: str, args: Tuple,
                                 mock_check_quota: Callable, output: str):
     with mock.patch.object(vera, 'check_quota', mock_check_quota) as check_quota, \
-            mock.patch.object(vera, 'check_randint_request_parameters') as check_parameters:
+            mock.patch.object(vera, '_check_randint_request_parameters') as check_parameters:
         assert_that(getattr(vera, method)(*args)).is_equal_to(output)
 
         check_quota.assert_called_once()
         check_parameters.assert_called_once()
+
+
+def _check_randint_request_parameters(vera: VeraRandom, *args):
+    with mock.patch.object(vera, '_get_randints'):
+        vera.randint(*args)
+
+
+def _assert_randint_exception(vera: VeraRandom, ex: Type[Exception], *args):
+    assert_that(_check_randint_request_parameters).raises(ex).when_called_with(vera, *args)

@@ -34,25 +34,21 @@ def _patch_response(url: str, method: str=responses.GET, **kwargs):
     responses.add(method, url, **kwargs)
 
 
-@responses.activate
 def test_max_quota(patch_vera_quota: VeraFactory):
-    patch_vera_quota(MAX_QUOTA).check_quota()
+    _check_quota_using_randint(patch_vera_quota, MAX_QUOTA)
 
 
-@responses.activate
 def test_valid_quota(patch_vera_quota: VeraFactory):
-    patch_vera_quota(1000).check_quota()
+    _check_quota_using_randint(patch_vera_quota, 1000)
 
 
-@responses.activate
 def test_quota_limit(patch_vera_quota: VeraFactory):
-    patch_vera_quota(QUOTA_LIMIT).check_quota()
+    _check_quota_using_randint(patch_vera_quota, QUOTA_LIMIT)
 
 
-@responses.activate
 def test_invalid_quota_below_limit(patch_vera_quota: VeraFactory):
     with raises(BitQuotaExceeded):
-        patch_vera_quota(QUOTA_LIMIT - 1).check_quota()
+        _check_quota_using_randint(patch_vera_quota, QUOTA_LIMIT - 1)
 
 
 @responses.activate
@@ -162,6 +158,13 @@ def test_quota_diminishes_after_request(patch_vera_quota: VeraRandom, lower: int
     assert_that(vera_random.quota_estimate).is_equal_to(MAX_QUOTA - bits)
 
 
+@responses.activate
+def _check_quota_using_randint(patch_vera_quota: VeraFactory, quota: int):
+    vera = patch_vera_quota(quota)
+    _patch_int_response('1')
+    vera.randint(1, 1)
+
+
 def assert_rand_call_output(vera: VeraRandom, method: str, *args, mock_response: str, output: Any):
     _patch_int_response(mock_response)
     mock_check_quota = mock.MagicMock(side_effect=vera._request_quota_if_unset)
@@ -170,7 +173,7 @@ def assert_rand_call_output(vera: VeraRandom, method: str, *args, mock_response:
 
 def _assert_patched_random_call(vera: VeraRandom, method: str, args: Tuple,
                                 mock_check_quota: Callable, output: str):
-    with mock.patch.object(vera, 'check_quota', mock_check_quota) as check_quota, \
+    with mock.patch.object(vera, '_check_quota', mock_check_quota) as check_quota, \
             mock.patch.object(vera, '_check_randint_parameters') as check_parameters:
         assert_that(getattr(vera, method)(*args)).is_equal_to(output)
 
@@ -179,10 +182,6 @@ def _assert_patched_random_call(vera: VeraRandom, method: str, args: Tuple,
 
 
 def _check_randint_parameters(vera: VeraRandom, *args):
-    _call_randint_while_mocking_request(vera, *args)
-
-
-def _call_randint_while_mocking_request(vera: VeraRandom, *args):
     with mock.patch.object(vera, '_get_randints_from_request'):
         vera.randint(*args)
 

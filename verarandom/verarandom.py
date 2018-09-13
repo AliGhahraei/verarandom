@@ -96,7 +96,7 @@ class VeraRandom(Random):
         """ Not implemented. """
         raise NotImplementedError
 
-    def check_quota(self):
+    def _check_quota(self):
         """ If IP can't make requests, raise BitQuotaExceeded. Called before generating numbers. """
         self._request_quota_if_unset()
 
@@ -168,5 +168,5 @@ class VeraRandom(Random):
         return response.text
 
     def _make_random_request(self, *args, **kwargs) -> str:
-        self.check_quota()
+        self._check_quota()
         return self._make_plain_text_request(*args, **kwargs)

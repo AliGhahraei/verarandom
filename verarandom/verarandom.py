@@ -67,8 +67,8 @@ class RandomNumberLimitTooSmall(RandomRequestFieldError):
 
 class VeraRandom(Random):
     """ True random (random.org) number generator implementing the random.Random interface. """
-    def __init__(self):
-        self._remaining_quota = None
+    def __init__(self, initial_quota: Optional[int] = None):
+        self._remaining_quota = initial_quota
         super().__init__()
 
     @property

@@ -103,7 +103,7 @@ class VeraRandom(Random):
         if self.quota_estimate < QUOTA_LIMIT:
             raise BitQuotaExceeded(self.quota_estimate)
 
-    def _check_randint_request_parameters(self, a: int, b: int, n: int):
+    def _check_randint_parameters(self, a: int, b: int, n: int):
         """ Check parameters for a random request and potentially raise RandomRequestFieldError. """
         self._check_number_of_randints(n)
         self._check_randint_range(a, b)
@@ -137,15 +137,15 @@ class VeraRandom(Random):
     def randint(self, a: int, b: int, n: Optional[int] = None) -> Union[List[int], int]:
         """ Generates n integers as a list or as a single integer if no n is given. """
         n_or_default = 1 if n is None else n
-        self._check_randint_request_parameters(a, b, n_or_default)
-        return self._get_randints(a, b, n, n_or_default)
+        self._check_randint_parameters(a, b, n_or_default)
+        integers = self._get_randints_from_request(a, b, n_or_default)
+        return integers if n else integers[0]
 
-    def _get_randints(self, a: int, b: int, n: Optional[int], n_or_default: int):
-        numbers_as_string = self._make_randint_request(a, b, n_or_default)
+    def _get_randints_from_request(self, a: int, b: int, n: int) -> List[int]:
+        numbers_as_string = self._make_randint_request(a, b, n)
         integers = [int(random) for random in numbers_as_string.splitlines()]
         self._remaining_quota -= sum(integer.bit_length() for integer in integers)
-
-        return integers if n else integers[0]
+        return integers
 
     def _make_randint_request(self, a: int, b: int, n: int) -> str:
         params = self._create_randint_request_params(a, b, n)

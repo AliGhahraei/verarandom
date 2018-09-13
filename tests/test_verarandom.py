@@ -60,23 +60,20 @@ def test_random(mock_response: str, output: float):
 
 @mark.parametrize('lower, upper, mock_response, output', [(1, 20, '17', 17)])
 @responses.activate
-def test_single_randint(lower: int, upper: int, mock_response: str,
-                        output: int):
+def test_single_randint(lower: int, upper: int, mock_response: str, output: int):
     assert_rand_call_output('randint', lower, upper, mock_response=mock_response, output=output)
 
 
 @mark.parametrize('lower, upper, mock_response, output', [(1, 5, '3', [3])])
 @responses.activate
-def test_single_randint_as_list(lower: int, upper: int,
-                                mock_response: str, output: int):
+def test_single_randint_as_list(lower: int, upper: int, mock_response: str, output: int):
     assert_rand_call_output('randint', lower, upper, 1, mock_response=mock_response, output=output)
 
 
 @mark.parametrize('lower, upper, n, mock_response, output',
                   [(1, 3, 5, '3\n3\n1\n2\n1', [3, 3, 1, 2, 1])])
 @responses.activate
-def test_randints(lower: int, upper: int, n: int, mock_response: str,
-                  output: List[int]):
+def test_randints(lower: int, upper: int, n: int, mock_response: str, output: List[int]):
     assert_rand_call_output('randint', lower, upper, n, mock_response=mock_response, output=output)
 
 
@@ -152,11 +149,12 @@ def _check_quota_using_randint(vera: VeraRandom):
 def assert_rand_call_output(vera_method: str, *args, mock_response: str, output: Any):
     vera = VeraRandom(MAX_QUOTA)
     _patch_int_response(mock_response)
+    # noinspection PyProtectedMember
     mock_check_quota = mock.MagicMock(side_effect=vera._request_quota_if_unset)
     _assert_patched_random_call(vera, vera_method, args, mock_check_quota, output)
 
 
-def _assert_patched_random_call(vera: VeraRandom, vera_method: 'str', args: Tuple,
+def _assert_patched_random_call(vera: VeraRandom, vera_method: str, args: Tuple,
                                 mock_check_quota: Callable, output: str):
     with mock.patch.object(vera, '_check_quota', mock_check_quota) as check_quota, \
             mock.patch.object(vera, '_check_randint_parameters') as check_parameters:

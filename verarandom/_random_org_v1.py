@@ -3,7 +3,7 @@ from typing import List, Dict, Optional
 
 from requests import get
 
-from verarandom.random_generator import VeraRandom, RandomConfig
+from verarandom import VeraRandom, RandomConfig
 
 
 RANDOM_ORG_URL = 'https://www.random.org'

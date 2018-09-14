@@ -10,7 +10,8 @@ from verarandom import (
     RandomOrgV1, BitQuotaExceeded, TooManyRandomNumbersRequested, RandomNumberLimitTooLarge,
     NoRandomNumbersRequested, RandomNumberLimitTooSmall,
 )
-from verarandom.random_org_v1 import (
+# noinspection PyProtectedMember
+from verarandom._random_org_v1 import (
     QUOTA_LIMIT, QUOTA_URL, MAX_QUOTA, INTEGER_URL, MAX_NUMBER_OF_INTEGERS, MAX_INTEGER_LIMIT,
     MIN_INTEGER_LIMIT,
 )

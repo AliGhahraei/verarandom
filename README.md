@@ -31,7 +31,7 @@ NOTE: this class assumes it's the only one talking to random.org when calculatin
 
 >>> r.randint(3, 5, n=1)
 [5]
->>> r.randint(-10, 3)  # a number's returned when no n is passed (like parent class)
+>>> r.randint(-10, 3)  # a single number (like random.randint)
 -2
 
 >>> r.random()

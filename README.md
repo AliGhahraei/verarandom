@@ -1,5 +1,6 @@
 # verarandom
 
+[![PyPI version](https://badge.fury.io/py/verarandom.svg)](https://badge.fury.io/py/verarandom)
 [![Build Status](https://travis-ci.org/AliGhahraei/verarandom.svg?branch=master)
 ](https://travis-ci.org/AliGhahraei/verarandom)
 [![codecov](https://codecov.io/gh/AliGhahraei/verarandom/branch/master/graph/badge.svg)

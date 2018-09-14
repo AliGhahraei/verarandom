@@ -41,9 +41,14 @@ def test_invalid_quota_below_limit():
         _check_quota_using_randint(RandomOrgV1(QUOTA_LIMIT - 1))
 
 
-@responses.activate
 def test_quota_property():
     assert_that(RandomOrgV1(500).quota_estimate).is_equal_to(500)
+
+
+@responses.activate
+def test_request_quota():
+    _patch_response(QUOTA_URL, body='1500')
+    assert_that(RandomOrgV1().request_quota()).is_equal_to(1500)
 
 
 @responses.activate

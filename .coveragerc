@@ -7,4 +7,5 @@ omit =
 exclude_lines =
     pragma: no cover
 
+    pass
     raise NotImplementedError

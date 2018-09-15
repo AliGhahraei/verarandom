@@ -1,10 +1,20 @@
-from requests import *
+from pkg_resources import get_distribution
+from requests import HTTPError
+
+from verarandom.errors import *
 from verarandom._random_generator import *
-from verarandom._random_org_v1 import *
+from verarandom.random_org_v1 import *
+from verarandom._utils import set_module_names_for_sphinx
+
+
+__version__ = get_distribution(__name__).version
+
+
+objects_with_modified_module_names = [RandomConfig, VeraRandom]
+set_module_names_for_sphinx(objects_with_modified_module_names, __name__)
 
 __ALL__ = [
-    VeraRandomError, BitQuotaExceeded, NoRandomNumbersRequested, TooManyRandomNumbersRequested,
-    RandomNumberLimitTooLarge, RandomNumberLimitTooSmall, RandomConfig, VeraRandom, RandomOrgV1,
+    *objects_with_modified_module_names, errors, random_org_v1,
     # Re-export for error handling in clients
     HTTPError,
 ]

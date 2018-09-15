@@ -19,8 +19,8 @@ with the request's parameters.
 NOTE: this class assumes it's the only one talking to random.org when calculating its quota.
 
 ```python
->>> from verarandom import RandomOrgV1
->>> r = RandomOrgV1()
+>>> from verarandom import RandomOrg
+>>> r = RandomOrg()
 
 >>> r.quota_estimate
 1000000

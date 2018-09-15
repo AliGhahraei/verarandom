@@ -1,3 +1,4 @@
+""" Old client for RandomOrg's API. """
 from enum import Enum, IntEnum
 from typing import List, Dict, Optional
 
@@ -21,13 +22,13 @@ FORMAT = 'format'
 PLAIN_FORMAT = 'plain'
 
 
-class RandintsToFloatOptions(IntEnum):
+class _RandintsToFloatOptions(IntEnum):
     """ random.org's API doesn't offer floats, but a sequence of integers can emulate this. """
     RANDINTS_QUANTITY = 3
     RANDINTS_NUMBER_OF_DIGITS = 5
 
 
-class RandintRequestFields(Enum):
+class _RandintRequestFields(Enum):
     RANDOMIZATION = 'rnd'
     TRULY_RANDOM = 'new'
     BASE = 'base'
@@ -38,7 +39,7 @@ class RandintRequestFields(Enum):
     COL = 'col'
 
 
-class RandomOrgV1(VeraRandom):
+class RandomOrg(VeraRandom):
     """ True random (random.org) number generator implementing the random.Random interface. """
     def __init__(self, initial_quota: Optional[int] = None):
         config = RandomConfig(QUOTA_LIMIT, MAX_INTEGER_LIMIT, MIN_INTEGER_LIMIT,
@@ -46,7 +47,7 @@ class RandomOrgV1(VeraRandom):
         super().__init__(config, initial_quota)
 
     def random(self, n: Optional[int] = None) -> float:
-        """ Generate a random float by using integers as its fractional part.
+        """ Generate random float(s) by using integers as fractional part.
 
         [06, 11, 21] => 0.061121
         """
@@ -54,10 +55,10 @@ class RandomOrgV1(VeraRandom):
         n_or_default = 1 if n is None else n
 
         for _ in range(n_or_default):
-            number_of_digits = RandintsToFloatOptions.RANDINTS_NUMBER_OF_DIGITS.value
+            number_of_digits = _RandintsToFloatOptions.RANDINTS_NUMBER_OF_DIGITS.value
             max_int = int('9' * number_of_digits)
 
-            randints = self.randint(0, max_int, RandintsToFloatOptions.RANDINTS_QUANTITY.value)
+            randints = self.randint(0, max_int, _RandintsToFloatOptions.RANDINTS_QUANTITY.value)
             zero_padded_ints = (str(randint).zfill(number_of_digits) for randint in randints)
             random = float(f"0.{''.join(zero_padded_ints)}")
             randoms.append(random)
@@ -74,10 +75,10 @@ class RandomOrgV1(VeraRandom):
 
     @staticmethod
     def _create_randint_request_params(a: int, b: int, n: int) -> Dict:
-        return {RandintRequestFields.RANDOMIZATION.value: RandintRequestFields.TRULY_RANDOM.value,
-                RandintRequestFields.BASE.value: RandintRequestFields.BASE_10.value,
-                RandintRequestFields.MIN.value: a, RandintRequestFields.MAX.value: b,
-                RandintRequestFields.NUM.value: n, RandintRequestFields.COL.value: 1}
+        return {_RandintRequestFields.RANDOMIZATION.value: _RandintRequestFields.TRULY_RANDOM.value,
+                _RandintRequestFields.BASE.value: _RandintRequestFields.BASE_10.value,
+                _RandintRequestFields.MIN.value: a, _RandintRequestFields.MAX.value: b,
+                _RandintRequestFields.NUM.value: n, _RandintRequestFields.COL.value: 1}
 
     @staticmethod
     def _make_plain_text_request(url: str, **kwargs) -> str:

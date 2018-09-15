@@ -3,33 +3,10 @@ from dataclasses import dataclass
 from random import Random
 from typing import Optional, Union, List, Any, Callable
 
-
-class VeraRandomError(Exception):
-    pass
-
-
-class BitQuotaExceeded(VeraRandomError):
-    """ IP has exceeded bit quota and should not be allowed to make further requests. """
-
-
-class RandomRequestFieldError(VeraRandomError, ValueError):
-    pass
-
-
-class NoRandomNumbersRequested(RandomRequestFieldError):
-    pass
-
-
-class TooManyRandomNumbersRequested(RandomRequestFieldError):
-    """ Attempted to request too many numbers to the generator's API """
-
-
-class RandomNumberLimitTooLarge(RandomRequestFieldError):
-    """ Max random number requested is too large for the generator's API """
-
-
-class RandomNumberLimitTooSmall(RandomRequestFieldError):
-    """ Min random number requested is too small for the generator's API """
+from verarandom.errors import (
+    BitQuotaExceeded, NoRandomNumbersRequested, TooManyRandomNumbersRequested,
+    RandomNumberLimitTooLarge, RandomNumberLimitTooSmall
+)
 
 
 @dataclass
@@ -50,6 +27,7 @@ class VeraRandom(Random, metaclass=ABCMeta):
 
     @property
     def quota_estimate(self) -> int:
+        """ Approximately how many bits are left  """
         self._request_remaining_quota_if_unset()
         return self._remaining_quota
 

@@ -63,7 +63,10 @@ class VeraRandom(Random, metaclass=ABCMeta):
 
     @abstractmethod
     def _request_randoms(self, n: int) -> List[float]:
-        """ (Abstract) retrieve random numbers from service using already validated parameters """
+        """ (Abstract) request numbers using already validated parameters.
+
+        Not meant to be used directly by subclasses.
+        """
 
     @abstractmethod
     def _request_randints(self, a: int, b: int, n: int) -> List[int]:
@@ -130,11 +133,14 @@ class VeraRandomQuota(VeraRandom, metaclass=ABCMeta):
 
     @abstractmethod
     def _request_quota(self) -> int:
-        pass
+        """ (Abstract) Request quota to service. """
 
     @abstractmethod
-    def _get_bits_spent(self, randomly_generated_object: Any) -> int:
-        pass
+    def _get_bits_spent(self, random_objects: List[Any]) -> int:
+        """ (Abstract) calculate number of bits used for generating random objects.
+
+        Function is used to subtract bits from the quota estimate.
+        """
 
     def _make_random_request(self, requester: Callable[..., List], **kwargs) -> List:
         self._check_quota()

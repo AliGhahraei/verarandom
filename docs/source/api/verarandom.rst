@@ -17,6 +17,9 @@ verarandom
     :undoc-members:
     :show-inheritance:
 
+    .. automethod:: verarandom.VeraRandomQuota._request_quota
+    .. automethod:: verarandom.VeraRandomQuota._get_bits_spent
+
 .. autoclass:: verarandom.RandomConfig
     :members:
     :undoc-members:

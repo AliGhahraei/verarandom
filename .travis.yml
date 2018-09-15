@@ -8,7 +8,10 @@ install:
   - pipenv install --dev --ignore-pipfile .
 script:
   - pytest --cov=.
+
+  - mkdir -p docs/source/_static docs/source/_templates
   - travis-sphinx build
 after_success:
   - bash <(curl -s https://codecov.io/bash)
+
   - travis-sphinx deploy

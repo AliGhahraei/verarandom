@@ -1,5 +1,4 @@
 from pkg_resources import get_distribution
-from requests import HTTPError
 
 from verarandom.errors import *
 from verarandom._random_generator import *
@@ -14,7 +13,5 @@ objects_with_modified_module_names = [RandomConfig, VeraRandom, VeraRandomQuota]
 set_module_names_for_sphinx(objects_with_modified_module_names, __name__)
 
 __ALL__ = [
-    *objects_with_modified_module_names, errors, random_org_v1,
-    # Re-export for error handling in clients
-    HTTPError,
+    *objects_with_modified_module_names, errors, random_org_v1, HTTPError,
 ]

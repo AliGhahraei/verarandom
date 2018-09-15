@@ -4,11 +4,10 @@ from unittest import mock
 import responses
 from assertpy import assert_that
 from pytest import mark, raises
-from requests import HTTPError
 
 from verarandom import (
     RandomOrg, BitQuotaExceeded, TooManyRandomNumbersRequested, RandomNumberLimitTooLarge,
-    NoRandomNumbersRequested, RandomNumberLimitTooSmall,
+    NoRandomNumbersRequested, RandomNumberLimitTooSmall, HTTPError
 )
 from verarandom.random_org_v1 import (
     QUOTA_URL, MAX_QUOTA, INTEGER_URL, MAX_NUMBER_OF_INTEGERS, MAX_INTEGER_LIMIT,
@@ -56,6 +55,13 @@ def test_invalid_quota_response():
     _patch_response(QUOTA_URL, status=500)
     with raises(HTTPError):
         RandomOrg().randint(1, 1)
+
+
+@responses.activate
+def test_invalid_randint_response():
+    _patch_response(INTEGER_URL, status=500)
+    with raises(HTTPError):
+        RandomOrg(500).randint(1, 1)
 
 
 @mark.parametrize('mock_response, output', [('12345\n67890\n11111', 0.12345_67890_11111),

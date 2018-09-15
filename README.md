@@ -14,9 +14,8 @@ Full documentation: https://alighahraei.github.io/verarandom/
 This module provides random.Random subclasses, so they implement all [random functions](
 https://docs.python.org/3/library/random.html) (except [Bookkeeping functions](
 https://docs.python.org/3/library/random.html#bookkeeping-functions)) with true randomness. They
-require an internet connection to work and will raise a ConnectionError if the server doesn't
-respond, a requests.HTTPError or a subclass of verarandom.VeraRandomError if there is a problem 
-with the request's parameters.
+require an internet connection to work and will either raise a ConnectionError or a subclass of
+verarandom.errors.VeraRandomError for validation failures and other related error conditions.
 
 ```python
 >>> from verarandom import RandomOrg

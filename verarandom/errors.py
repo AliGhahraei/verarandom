@@ -1,5 +1,9 @@
 class VeraRandomError(Exception):
-    """ Base exception class """
+    """ Base exception class for the whole package. """
+
+
+class HTTPError(VeraRandomError):
+    """ An HTTP error occured """
 
 
 class BitQuotaExceeded(VeraRandomError):

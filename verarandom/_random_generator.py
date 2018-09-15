@@ -1,11 +1,14 @@
 from abc import ABCMeta, abstractmethod
 from dataclasses import dataclass
+from functools import wraps
 from random import Random
 from typing import Optional, Union, List, Any, Callable
 
+import requests
+
 from verarandom.errors import (
     BitQuotaExceeded, NoRandomNumbersRequested, TooManyRandomNumbersRequested,
-    RandomNumberLimitTooLarge, RandomNumberLimitTooSmall
+    RandomNumberLimitTooLarge, RandomNumberLimitTooSmall, HTTPError,
 )
 
 
@@ -23,6 +26,17 @@ class RandomConfig:
     MIN_INTEGER: int
     MAX_NUMBER_OF_INTEGERS: int
     MAX_NUMBER_OF_FLOATS: int
+
+
+def reraise_request_errors(f: Callable):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        try:
+            return f(*args, **kwargs)
+        except requests.HTTPError as e:
+            raise HTTPError(str(e)) from e
+
+    return wrapper
 
 
 class VeraRandom(Random, metaclass=ABCMeta):
@@ -97,6 +111,7 @@ class VeraRandom(Random, metaclass=ABCMeta):
         if n > max_:
             raise TooManyRandomNumbersRequested(n)
 
+    @reraise_request_errors
     def _make_random_request(self, requester: Callable[..., List], **kwargs) -> List:
         return requester(**kwargs)
 
@@ -126,6 +141,7 @@ class VeraRandomQuota(VeraRandom, metaclass=ABCMeta):
         self._request_remaining_quota_if_unset()
         return self._remaining_quota
 
+    @reraise_request_errors
     def request_quota(self) -> int:
         """ Request bit quota and store it """
         self._remaining_quota = self._request_quota()

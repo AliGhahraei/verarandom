@@ -1,17 +1,16 @@
 """ Old client for RandomOrg's API. """
 from enum import Enum, IntEnum
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Union
 
 from requests import get
 
-from verarandom import VeraRandom, RandomConfig
+from verarandom import VeraRandomQuota, RandomConfig
 
 
 RANDOM_ORG_URL = 'https://www.random.org'
 QUOTA_URL = f'{RANDOM_ORG_URL}/quota'
 INTEGER_URL = f'{RANDOM_ORG_URL}/integers'
 
-QUOTA_LIMIT = 0
 MAX_QUOTA = 1_000_000
 
 MAX_INTEGER_LIMIT = int(1e9)
@@ -23,7 +22,6 @@ PLAIN_FORMAT = 'plain'
 
 
 class _RandintsToFloatOptions(IntEnum):
-    """ random.org's API doesn't offer floats, but a sequence of integers can emulate this. """
     RANDINTS_QUANTITY = 3
     RANDINTS_NUMBER_OF_DIGITS = 5
 
@@ -39,17 +37,22 @@ class _RandintRequestFields(Enum):
     COL = 'col'
 
 
-class RandomOrg(VeraRandom):
-    """ True random (random.org) number generator implementing the random.Random interface. """
+class RandomOrg(VeraRandomQuota):
+    """ `<http://random.org/>`_ number generator.
+
+     NOTE: this class assumes it's the only one talking to the server when calculating its quota.
+     """
     def __init__(self, initial_quota: Optional[int] = None):
-        config = RandomConfig(QUOTA_LIMIT, MAX_INTEGER_LIMIT, MIN_INTEGER_LIMIT,
-                              MAX_NUMBER_OF_INTEGERS, 0)
+        # noinspection PyArgumentList
+        config = RandomConfig(MAX_INTEGER_LIMIT, MIN_INTEGER_LIMIT, MAX_NUMBER_OF_INTEGERS, 0)
         super().__init__(config, initial_quota)
 
-    def random(self, n: Optional[int] = None) -> float:
+    def random(self, n: Optional[int] = None) -> Union[List[float], float]:
         """ Generate random float(s) by using integers as fractional part.
 
-        [06, 11, 21] => 0.061121
+        random.org's API doesn't offer floats, but a sequence of integers can emulate this:
+
+        [06357, 114, 0210] => 0.06357_00114_00210
         """
         randoms = []
         n_or_default = 1 if n is None else n

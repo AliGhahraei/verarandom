@@ -3,7 +3,7 @@ class VeraRandomError(Exception):
 
 
 class BitQuotaExceeded(VeraRandomError):
-    """ IP has exceeded bit quota and should not be allowed to make further requests. """
+    """ IP has exceeded bit quota and is not allowed to make further requests. """
 
 
 class RandomRequestFieldError(VeraRandomError, ValueError):
@@ -15,12 +15,12 @@ class NoRandomNumbersRequested(RandomRequestFieldError):
 
 
 class TooManyRandomNumbersRequested(RandomRequestFieldError):
-    """ Attempted to request too many numbers to the generator's API """
+    """ Attempted to request too many numbers for the service's API """
 
 
 class RandomNumberLimitTooLarge(RandomRequestFieldError):
-    """ Max random number requested is too large for the generator's API """
+    """ Max random number requested is too large for the service's API """
 
 
 class RandomNumberLimitTooSmall(RandomRequestFieldError):
-    """ Min random number requested is too small for the generator's API """
+    """ Min random number requested is too small for the service's API """

@@ -10,7 +10,7 @@ from verarandom._utils import set_module_names_for_sphinx
 __version__ = get_distribution(__name__).version
 
 
-objects_with_modified_module_names = [RandomConfig, VeraRandom]
+objects_with_modified_module_names = [RandomConfig, VeraRandom, VeraRandomQuota]
 set_module_names_for_sphinx(objects_with_modified_module_names, __name__)
 
 __ALL__ = [

@@ -12,7 +12,7 @@ from verarandom import (
 )
 # noinspection PyProtectedMember
 from verarandom.random_org_v1 import (
-    QUOTA_LIMIT, QUOTA_URL, MAX_QUOTA, INTEGER_URL, MAX_NUMBER_OF_INTEGERS, MAX_INTEGER_LIMIT,
+    QUOTA_URL, MAX_QUOTA, INTEGER_URL, MAX_NUMBER_OF_INTEGERS, MAX_INTEGER_LIMIT,
     MIN_INTEGER_LIMIT,
 )
 
@@ -34,12 +34,12 @@ def test_valid_quota():
 
 
 def test_quota_limit():
-    _check_quota_using_randint(RandomOrg(QUOTA_LIMIT))
+    _check_quota_using_randint(RandomOrg(0))
 
 
 def test_invalid_quota_below_limit():
     with raises(BitQuotaExceeded):
-        _check_quota_using_randint(RandomOrg(QUOTA_LIMIT - 1))
+        _check_quota_using_randint(RandomOrg(-1))
 
 
 def test_quota_property():
@@ -173,7 +173,7 @@ def _assert_patched_random_call(vera: RandomOrg, vera_method: str, args: Tuple,
 
 
 def _check_randint_parameters(vera: RandomOrg, *args):
-    with mock.patch.object(vera, '_request_randoms_updating_quota'):
+    with mock.patch.object(vera, '_make_random_request'):
         vera.randint(*args)
 
 

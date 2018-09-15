@@ -5,8 +5,8 @@ with open("README.md") as f:
 
 setup(
     name='verarandom',
-    version='1.1.0',
-    description='True random numbers (provided by random.org) in Python',
+    version='2.0.0',
+    description='True random numbers in Python',
     author='Ali Ghahraei Figueroa',
     author_email='aligf94@gmail.com',
     url='https://github.com/AliGhahraei/verarandom',

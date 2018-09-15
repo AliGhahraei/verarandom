@@ -11,6 +11,8 @@ pytest = "*"
 responses = "*"
 assertpy = "*"
 pytest-cov = "*"
+sphinx = "*"
+travis-sphinx = "*"
 
 [requires]
 python_version = "3.7"

@@ -129,7 +129,7 @@ class VeraRandomQuota(VeraRandom, metaclass=ABCMeta):
         """
         :param config: values to use in parameter validation
         :param initial_quota: last known quota
-        :param quota_limit: minimum numbers of bits in quota to allow a request
+        :param quota_limit: minimum number of bits in quota to allow a request
         """
         self._remaining_quota = initial_quota
         self.quota_limit = quota_limit

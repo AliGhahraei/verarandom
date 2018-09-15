@@ -24,18 +24,18 @@ verarandom
     :members:
     :undoc-members:
 
-verarandom.errors
---------------------------
-
-.. automodule:: verarandom.errors
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 verarandom.random\_org\_v1
 --------------------------
 
 .. automodule:: verarandom.random_org_v1
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+verarandom.errors
+--------------------------
+
+.. automodule:: verarandom.errors
     :members:
     :undoc-members:
     :show-inheritance:

@@ -1,0 +1,319 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>API &#8212; VeraRandom 2.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Welcome to VeraRandom’s documentation!" href="../index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="api">
+<h1>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="verarandom">
+<h2>verarandom<a class="headerlink" href="#verarandom" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="verarandom.VeraRandom">
+<em class="property">class </em><code class="descclassname">verarandom.</code><code class="descname">VeraRandom</code><span class="sig-paren">(</span><em>config: verarandom.RandomConfig</em><span class="sig-paren">)</span><a class="headerlink" href="#verarandom.VeraRandom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">random.Random</span></code></p>
+<p><a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a> for random number services.</p>
+<p>Subclasses calculate true random numbers using a suitable online service. This class provides
+parameter validation using a configuration with minimum and maximum allowed values.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config</strong> – values to use in parameter validation</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="verarandom.VeraRandom._request_randoms">
+<code class="descname">_request_randoms</code><span class="sig-paren">(</span><em>n: int</em><span class="sig-paren">)</span> &#x2192; List[float]<a class="headerlink" href="#verarandom.VeraRandom._request_randoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>(Abstract) request numbers using already validated parameters.</p>
+<p>Not meant to be used directly by subclasses.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="verarandom.VeraRandom._request_randints">
+<code class="descname">_request_randints</code><span class="sig-paren">(</span><em>a: int</em>, <em>b: int</em>, <em>n: int</em><span class="sig-paren">)</span> &#x2192; List[int]<a class="headerlink" href="#verarandom.VeraRandom._request_randints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Similar to <a class="reference internal" href="#verarandom.VeraRandom._request_randoms" title="verarandom.VeraRandom._request_randoms"><code class="xref py py-func docutils literal notranslate"><span class="pre">_request_randoms()</span></code></a></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="verarandom.VeraRandom.getstate">
+<code class="descname">getstate</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#verarandom.VeraRandom.getstate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Empty definition.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="verarandom.VeraRandom.randint">
+<code class="descname">randint</code><span class="sig-paren">(</span><em>a: int</em>, <em>b: int</em>, <em>n: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; Union[List[int], int]<a class="headerlink" href="#verarandom.VeraRandom.randint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate n numbers as a list or a single one if no n is given.</p>
+<p>n is used to minimize the number of requests made and return type changes to be compatible
+with <a class="reference external" href="https://docs.python.org/3/library/random.html#module-random" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">random</span></code></a>’s interface</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="verarandom.VeraRandom.random">
+<code class="descname">random</code><span class="sig-paren">(</span><em>n: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; Union[List[float], float]<a class="headerlink" href="#verarandom.VeraRandom.random" title="Permalink to this definition">¶</a></dt>
+<dd><p>Similar to <a class="reference internal" href="#verarandom.VeraRandom.randint" title="verarandom.VeraRandom.randint"><code class="xref py py-func docutils literal notranslate"><span class="pre">randint()</span></code></a></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="verarandom.VeraRandom.seed">
+<code class="descname">seed</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#verarandom.VeraRandom.seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Empty definition.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="verarandom.VeraRandom.setstate">
+<code class="descname">setstate</code><span class="sig-paren">(</span><em>_</em><span class="sig-paren">)</span><a class="headerlink" href="#verarandom.VeraRandom.setstate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Empty definition.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="verarandom.VeraRandomQuota">
+<em class="property">class </em><code class="descclassname">verarandom.</code><code class="descname">VeraRandomQuota</code><span class="sig-paren">(</span><em>config: verarandom.RandomConfig</em>, <em>initial_quota: Optional[int] = None</em>, <em>quota_limit: int = 0</em><span class="sig-paren">)</span><a class="headerlink" href="#verarandom.VeraRandomQuota" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#verarandom.VeraRandom" title="verarandom.VeraRandom"><code class="xref py py-class docutils literal notranslate"><span class="pre">verarandom.VeraRandom</span></code></a></p>
+<p><a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a> for services with a limited number of bits per user like random.org</p>
+<p>Internally tracks a quota estimate by substracting each request’s number of bits from the
+initial quota and verifies there are bits left before each request.</p>
+<p>NOTE: this class assumes it’s the only one talking to the server when calculating its quota.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>config</strong> – values to use in parameter validation</li>
+<li><strong>initial_quota</strong> – last known quota</li>
+<li><strong>quota_limit</strong> – minimum number of bits in quota to allow a request</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="verarandom.VeraRandomQuota._request_quota">
+<code class="descname">_request_quota</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="headerlink" href="#verarandom.VeraRandomQuota._request_quota" title="Permalink to this definition">¶</a></dt>
+<dd><p>(Abstract) Request quota to service.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="verarandom.VeraRandomQuota._get_bits_spent">
+<code class="descname">_get_bits_spent</code><span class="sig-paren">(</span><em>random_objects: List[Any]</em><span class="sig-paren">)</span> &#x2192; int<a class="headerlink" href="#verarandom.VeraRandomQuota._get_bits_spent" title="Permalink to this definition">¶</a></dt>
+<dd><p>(Abstract) calculate number of bits used for generating random objects.</p>
+<p>Function is used to subtract bits from the quota estimate.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="verarandom.VeraRandomQuota.quota_estimate">
+<code class="descname">quota_estimate</code><a class="headerlink" href="#verarandom.VeraRandomQuota.quota_estimate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Approximately how many bits are left for the current user</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="verarandom.VeraRandomQuota.request_quota">
+<code class="descname">request_quota</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="headerlink" href="#verarandom.VeraRandomQuota.request_quota" title="Permalink to this definition">¶</a></dt>
+<dd><p>Request bit quota and store it</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="verarandom.RandomConfig">
+<em class="property">class </em><code class="descclassname">verarandom.</code><code class="descname">RandomConfig</code><span class="sig-paren">(</span><em>MAX_INTEGER: int</em>, <em>MIN_INTEGER: int</em>, <em>MAX_NUMBER_OF_INTEGERS: int</em>, <em>MAX_NUMBER_OF_FLOATS: int</em><span class="sig-paren">)</span><a class="headerlink" href="#verarandom.RandomConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configuration used by <code class="xref py py-class docutils literal notranslate"><span class="pre">verarandom.Verarandom</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>MAX_INTEGER</strong> – maximum integer that may be requested</li>
+<li><strong>MIN_INTEGER</strong> – minimum integer that may be requested</li>
+<li><strong>MAX_NUMBER_OF_INTEGERS</strong> – integers limit for a single request</li>
+<li><strong>MAX_NUMBER_OF_FLOATS</strong> – floats limit for a single request</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-verarandom.random_org_v1">
+<span id="verarandom-random-org-v1"></span><h2>verarandom.random_org_v1<a class="headerlink" href="#module-verarandom.random_org_v1" title="Permalink to this headline">¶</a></h2>
+<p>Old client for RandomOrg’s API.</p>
+<dl class="class">
+<dt id="verarandom.random_org_v1.RandomOrg">
+<em class="property">class </em><code class="descclassname">verarandom.random_org_v1.</code><code class="descname">RandomOrg</code><span class="sig-paren">(</span><em>initial_quota: Optional[int] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#verarandom.random_org_v1.RandomOrg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#verarandom.VeraRandomQuota" title="verarandom.VeraRandomQuota"><code class="xref py py-class docutils literal notranslate"><span class="pre">verarandom.VeraRandomQuota</span></code></a></p>
+<p><a class="reference external" href="http://random.org/">http://random.org/</a> number generator.</p>
+<p>NOTE: this class assumes it’s the only one talking to the server when calculating its quota.</p>
+<dl class="method">
+<dt id="verarandom.random_org_v1.RandomOrg.random">
+<code class="descname">random</code><span class="sig-paren">(</span><em>n: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; Union[List[float], float]<a class="headerlink" href="#verarandom.random_org_v1.RandomOrg.random" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate random float(s) by using integers as fractional part.</p>
+<p>random.org’s API doesn’t offer floats, but a sequence of integers can emulate this:</p>
+<p>[06357, 114, 0210] =&gt; 0.06357_00114_00210</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-verarandom.errors">
+<span id="verarandom-errors"></span><h2>verarandom.errors<a class="headerlink" href="#module-verarandom.errors" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="verarandom.errors.VeraRandomError">
+<em class="property">exception </em><code class="descclassname">verarandom.errors.</code><code class="descname">VeraRandomError</code><a class="headerlink" href="#verarandom.errors.VeraRandomError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+<p>Base exception class for the whole package.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="verarandom.errors.HTTPError">
+<em class="property">exception </em><code class="descclassname">verarandom.errors.</code><code class="descname">HTTPError</code><a class="headerlink" href="#verarandom.errors.HTTPError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#verarandom.errors.VeraRandomError" title="verarandom.errors.VeraRandomError"><code class="xref py py-class docutils literal notranslate"><span class="pre">verarandom.errors.VeraRandomError</span></code></a></p>
+<p>An HTTP error occured</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="verarandom.errors.BitQuotaExceeded">
+<em class="property">exception </em><code class="descclassname">verarandom.errors.</code><code class="descname">BitQuotaExceeded</code><a class="headerlink" href="#verarandom.errors.BitQuotaExceeded" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#verarandom.errors.VeraRandomError" title="verarandom.errors.VeraRandomError"><code class="xref py py-class docutils literal notranslate"><span class="pre">verarandom.errors.VeraRandomError</span></code></a></p>
+<p>IP has exceeded bit quota and is not allowed to make further requests.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="verarandom.errors.RandomRequestFieldError">
+<em class="property">exception </em><code class="descclassname">verarandom.errors.</code><code class="descname">RandomRequestFieldError</code><a class="headerlink" href="#verarandom.errors.RandomRequestFieldError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#verarandom.errors.VeraRandomError" title="verarandom.errors.VeraRandomError"><code class="xref py py-class docutils literal notranslate"><span class="pre">verarandom.errors.VeraRandomError</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></a></p>
+<p>At least one of the request’s fields is invalid</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="verarandom.errors.NoRandomNumbersRequested">
+<em class="property">exception </em><code class="descclassname">verarandom.errors.</code><code class="descname">NoRandomNumbersRequested</code><a class="headerlink" href="#verarandom.errors.NoRandomNumbersRequested" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#verarandom.errors.RandomRequestFieldError" title="verarandom.errors.RandomRequestFieldError"><code class="xref py py-class docutils literal notranslate"><span class="pre">verarandom.errors.RandomRequestFieldError</span></code></a></p>
+<p>Attempted to request 0 numbers</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="verarandom.errors.TooManyRandomNumbersRequested">
+<em class="property">exception </em><code class="descclassname">verarandom.errors.</code><code class="descname">TooManyRandomNumbersRequested</code><a class="headerlink" href="#verarandom.errors.TooManyRandomNumbersRequested" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#verarandom.errors.RandomRequestFieldError" title="verarandom.errors.RandomRequestFieldError"><code class="xref py py-class docutils literal notranslate"><span class="pre">verarandom.errors.RandomRequestFieldError</span></code></a></p>
+<p>Attempted to request too many numbers for the service’s API</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="verarandom.errors.RandomNumberLimitTooLarge">
+<em class="property">exception </em><code class="descclassname">verarandom.errors.</code><code class="descname">RandomNumberLimitTooLarge</code><a class="headerlink" href="#verarandom.errors.RandomNumberLimitTooLarge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#verarandom.errors.RandomRequestFieldError" title="verarandom.errors.RandomRequestFieldError"><code class="xref py py-class docutils literal notranslate"><span class="pre">verarandom.errors.RandomRequestFieldError</span></code></a></p>
+<p>Max random number requested is too large for the service’s API</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="verarandom.errors.RandomNumberLimitTooSmall">
+<em class="property">exception </em><code class="descclassname">verarandom.errors.</code><code class="descname">RandomNumberLimitTooSmall</code><a class="headerlink" href="#verarandom.errors.RandomNumberLimitTooSmall" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#verarandom.errors.RandomRequestFieldError" title="verarandom.errors.RandomRequestFieldError"><code class="xref py py-class docutils literal notranslate"><span class="pre">verarandom.errors.RandomRequestFieldError</span></code></a></p>
+<p>Min random number requested is too small for the service’s API</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">VeraRandom</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#verarandom">verarandom</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-verarandom.random_org_v1">verarandom.random_org_v1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-verarandom.errors">verarandom.errors</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../index.html" title="previous chapter">Welcome to VeraRandom’s documentation!</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Ali Ghahraei Figueroa.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="../_sources/api/verarandom.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

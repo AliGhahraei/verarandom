@@ -1,11 +1,19 @@
+from re import search
 from setuptools import setup, find_packages
+
+
+name = 'verarandom'
 
 with open("README.md") as f:
     long_description = f.read()
 
+with open(f'{name}/__init__.py') as f:
+    version = search(r"__version__ = '(.*)'", f.read()).group(1)
+
+
 setup(
-    name='verarandom',
-    version='2.0.0',
+    name=name,
+    version=version,
     description='True random numbers in Python',
     author='Ali Ghahraei Figueroa',
     author_email='aligf94@gmail.com',

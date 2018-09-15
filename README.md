@@ -8,6 +8,8 @@
 
 True random numbers in Python.
 
+Full documentation: https://alighahraei.github.io/verarandom/
+
 # Usage
 This module provides random.Random subclasses, so they implement all [random functions](
 https://docs.python.org/3/library/random.html) (except [Bookkeeping functions](

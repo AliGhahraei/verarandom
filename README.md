@@ -1,3 +1,8 @@
+# NO LONGER MAINTAINED
+I developed this when I used to play DnD, but I don't do it anymore.
+
+---
+
 # verarandom
 
 [![PyPI version](https://badge.fury.io/py/verarandom.svg)](https://badge.fury.io/py/verarandom)
